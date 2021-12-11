@@ -13,6 +13,7 @@ class Ping(commands.Cog, name="Ping"):
         file = 'config.ini'
         self.config = ConfigParser()
         self.config.read(file)
+        del file
 
     @commands.command()
     async def ping(self, ctx: commands.Context):

@@ -11,6 +11,7 @@ def main():
     file = 'config.ini'
     config = ConfigParser()
     config.read(file)
+    del file
 
     intents = discord.Intents.all()
     client = commands.Bot(command_prefix=">", intents=intents)
