@@ -1,5 +1,6 @@
 from configparser import ConfigParser
 
+import discord
 from discord.ext import commands
 
 
@@ -23,8 +24,12 @@ class Ping(commands.Cog, name="Ping"):
                 if i.id == int(self.config['role']['bot_commander']):
                     """Checks for a response from the Bot"""
                     await ctx.send(f'{ctx.message.author.mention}\nPong! {round(self.bot.latency * 1000)}ms')
+            # await ctx.message.delete() # Delete message, does this make sense ?
         except Exception as e:
-            await ctx.send('Something went wrong! - This command is not available here')
+            errorEmbed = discord.Embed(title='Something went wrong!',
+                                        description=f'**This command is not available here**\n||{e}||',
+                                        color=discord.Color.red())
+            await ctx.send(embed=errorEmbed)
 
 def setup(bot: commands.Bot):
     bot.add_cog(Ping(bot))
