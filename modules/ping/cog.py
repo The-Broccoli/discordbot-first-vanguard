@@ -18,10 +18,13 @@ class Ping(commands.Cog, name="Ping"):
     @commands.command()
     async def ping(self, ctx: commands.Context):
         """the bot responds to this command "pong" if the user has the "bot_commander" role"""
-        for i in ctx.author.roles:
-            if i.id == int(self.config['role']['bot_commander']):
-                """Checks for a response from the Bot"""
-                await ctx.send(f'Pong {ctx.message.author.mention}')
+        try:
+            for i in ctx.author.roles:
+                if i.id == int(self.config['role']['bot_commander']):
+                    """Checks for a response from the Bot"""
+                    await ctx.send(f'{ctx.message.author.mention}\nPong! {round(self.bot.latency * 1000)}ms')
+        except Exception as e:
+            await ctx.send('Something went wrong! - This command is not available here')
 
 def setup(bot: commands.Bot):
     bot.add_cog(Ping(bot))
