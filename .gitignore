@@ -2,3 +2,4 @@
 test.py
 *.pyc
 config.ini
+blacklist.txt
