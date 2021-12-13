@@ -91,6 +91,18 @@ class Taxes(commands.Cog, name="Taxes"):
             return '🟢'
         else:
             return '⚪' # error
+    
+    def info_embed(self, ctx: commands.Context, intervalValue, unpaidTaxes, paidTaxes, blacklist, presenceTime):
+        infoEmbed = discord.Embed(title='Gildensteuer Benachrichtigung',
+                                description=f'Hallo {ctx.message.author.mention}, mit diesem Befehl kannst du eine Private Notification **an alle Mitglieder** automatisiert versenden, die noch keine Steuern in dieser KW gezahlt haben (aufgenommen Mitglieder, die diesen Dienst verweigert haben).',
+                                color=discord.Colour.green())
+        infoEmbed.add_field(name="Ablauf",
+                            value=f'Sobald du auf "Absenden" klickst, werde die Nachrichten in einem Intervall von {intervalValue} Minuten versendet. Zwischen dem Versenden der Nachrichten ist so genügen Zeit, um die Beiträge einzutragen.\n`({unpaidTaxes} (Unbezahlt) - {len(blacklist)} (Blacklist)) * {intervalValue} Minuten = {presenceTime[1]}`\n Anwesenheit gewähren bis **{presenceTime[0]}**',
+                            inline=True)
+        infoEmbed.add_field(name='Tax status',
+                            value=f'Offen: **{unpaidTaxes}**\tBezahlt: **{paidTaxes}**',
+                            inline=True)
+        return infoEmbed
 
     def blacklist_embed(self, blacklist):
         __today = datetime.now()
@@ -134,15 +146,7 @@ class Taxes(commands.Cog, name="Taxes"):
             for i in ctx.author.roles: # passing through the roles of the author
                 if i.id == int(self.config['role']['bot_commander']): # is there the role id that matches bot_commander id ?
                     """With this command you can start the tax notification"""
-                    infoEmbed = discord.Embed(title='Gildensteuer Benachrichtigung',
-                                            description=f'Hallo {ctx.message.author.mention}, mit diesem Befehl kannst du eine Private Notification **an alle Mitglieder** automatisiert versenden, die noch keine Steuern in dieser KW gezahlt haben (aufgenommen Mitglieder, die diesen Dienst verweigert haben).',
-                                            color=discord.Colour.green())
-                    infoEmbed.add_field(name="Ablauf",
-                                        value=f'Sobald du auf "Absenden" klickst, werde die Nachrichten in einem Intervall von {intervalValue} Minuten versendet. Zwischen dem Versenden der Nachrichten ist so genügen Zeit, um die Beiträge einzutragen.\n`({unpaidTaxes} (Unbezahlt) - {len(blacklist)} (Blacklist)) * {intervalValue} Minuten = {presenceTime[1]}`\n Anwesenheit gewähren bis **{presenceTime[0]}**',
-                                        inline=True)
-                    infoEmbed.add_field(name='Tax status',
-                                        value=f'Offen: **{unpaidTaxes}**\tBezahlt: **{paidTaxes}**',
-                                        inline=True)
+                    infoEmbed = self.info_embed(ctx, intervalValue, unpaidTaxes, paidTaxes, blacklist, presenceTime)
                     view = self.TaxView(ctx, self.config) # create view
                     msg = await ctx.send(embed=infoEmbed ,view=view) # send embed and view and save message class in msg
                     await view.wait() # waiting for button click
