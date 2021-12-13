@@ -80,7 +80,7 @@ class Taxes(commands.Cog, name="Taxes"):
         del __file
         return blackList
     
-    def blacklistTimeIcon(self, today: datetime, userTime: datetime):
+    def blacklist_time_icon(self, today: datetime, userTime: datetime):
         if userTime < today - timedelta(days=14): # over 2 weeks
             return '🔴'
         elif userTime < today - timedelta(days=7): # over 1 week
@@ -100,7 +100,7 @@ class Taxes(commands.Cog, name="Taxes"):
         for __user in blacklist:
             try:
                 __user = __user.split(';')
-                __icon = self.blacklistTimeIcon(__today, datetime.strptime(__user[1], '%d/%m/%y-%H:%M:%S'))
+                __icon = self.blacklist_time_icon(__today, datetime.strptime(__user[1], '%d/%m/%y-%H:%M:%S'))
                 __blacklistString += f'{__icon} - <@!{__user[0]}> - {__user[1][:-9]}\n'
             except:
                 __blacklistString += f'⚪ - Error {__user}\n'
