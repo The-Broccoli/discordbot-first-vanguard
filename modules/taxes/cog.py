@@ -68,7 +68,7 @@ class Taxes(commands.Cog, name="Taxes"):
                                         color=discord.Color.red())
             await interaction.response.send_message(view=errorEmbed)
             self.stop()
-    
+
     def load_blacklist(self):
         # check if the file exists (otherwise create it)
         __file = Path('blacklist.txt')
@@ -92,6 +92,13 @@ class Taxes(commands.Cog, name="Taxes"):
         else:
             return '⚪' # error
     
+    def error_embed(self, error_message):
+        """Returns an error embed"""
+        errorEmbed = discord.Embed(title='Something went wrong!',
+                                    description=f'**This command is not available here**\n||{error_message}||',
+                                    color=discord.Color.red())
+        return errorEmbed
+    
     def info_embed(self, ctx: commands.Context, intervalValue, unpaidTaxes, paidTaxes, blacklist, presenceTime):
         infoEmbed = discord.Embed(title='Gildensteuer Benachrichtigung',
                                 description=f'Hallo {ctx.message.author.mention}, mit diesem Befehl kannst du eine Private Notification **an alle Mitglieder** automatisiert versenden, die noch keine Steuern in dieser KW gezahlt haben (aufgenommen Mitglieder, die diesen Dienst verweigert haben).',
@@ -113,7 +120,8 @@ class Taxes(commands.Cog, name="Taxes"):
             try:
                 __user = __user.split(';')
                 __icon = self.blacklist_time_icon(__today, datetime.strptime(__user[1], '%d/%m/%y-%H:%M:%S'))
-                __blacklistString += f'{__icon} - <@!{__user[0]}> - {__user[1][:-9]}\n'
+                __user[1] = __user[1][:-9].replace('/', '.')
+                __blacklistString += f'{__icon} - <@!{__user[0]}> - {__user[1]}\n'
             except:
                 __blacklistString += f'⚪ - Error {__user}\n'
         # create and fill embed for user
@@ -164,10 +172,7 @@ class Taxes(commands.Cog, name="Taxes"):
                         return
             # await ctx.message.delete() # TODO Delete message, does this make sense ?
         except Exception as e:
-            errorEmbed = discord.Embed(title='Something went wrong!',
-                                        description=f'**This command is not available here**\n||{e}||',
-                                        color=discord.Color.red())
-            await ctx.send(embed=errorEmbed)
+            await ctx.send(embed=self.error_embed(e))
 
 def setup(bot: commands.Bot):
     bot.add_cog(Taxes(bot))
