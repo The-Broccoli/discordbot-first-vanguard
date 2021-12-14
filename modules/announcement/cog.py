@@ -24,21 +24,21 @@ class Announcement(commands.Cog, name="Announcement"):
         self.botVersion = str(self.config.get('bot_info', 'version'))
     
     def error_embed(self, error_message):
-        """Returns an error embed"""
+        """Returns an error embed for a error message"""
         errorEmbed = discord.Embed(title=f'{self.annonewTitle} - Something went wrong!',
                                     description=f'**This command is not available here**\n||{error_message}||',
                                     color=discord.Color.red())
         return errorEmbed
     
     def anno_new_embed(self):
-        """TODO"""
+        """Returns an embed for the new announcement command"""
         annoEmbed = discord.Embed(title=f'{self.annonewTitle} - Formular',
                                     description='Wähle hintereinander bitte folgende Informationen aus\n\n- Art des Events: `Angriffskrieg, Verteidigungskrieg, Invasion`\n- In welchem Gebiet: `Everfall, Windsward, Mourningdale, ...`\n- An welchen Tag: `Tue, Wed, Thu, Fri ...`\n- Um wie viel Uhr: `17:30, 18:00, 18:30, 19:00, ...`',
                                     color=discord.Color.green())
         return annoEmbed
     
     def anno_embed_war(self, type, area, day, time, enemy):
-        """TODO"""
+        """Returns an embed for the war announcement message"""
         __meetingTime = datetime.strptime(time, '%H:%M')
         __meetingTime = __meetingTime - timedelta(minutes=15)
         __meetingTime = __meetingTime.strftime('%H:%M')
@@ -58,7 +58,7 @@ class Announcement(commands.Cog, name="Announcement"):
         return annoEmbed
     
     def anno_embed_inv(self, area, day, time):
-        """TODO"""
+        """Returns an embed for the invasion announcement message"""
         annoEmbed = discord.Embed(title=f'',
                                     description=f'**Area:** {area}\n**Time:** {time}\n**Day:** {day}',
                                     color=discord.Color.green())
@@ -66,14 +66,14 @@ class Announcement(commands.Cog, name="Announcement"):
         return annoEmbed
     
     def delivered_embed(self, ctx: commands.Context, channelId):
-        """TODO"""
+        """returns an embed for the delivered announcement message"""
         deliveredEmbed = discord.Embed(title=f'{self.annonewTitle} - Ankündigung wurde veröffentlicht!',
                                     description=f'{ctx.message.author.mention} deine Ankündigung wurde im Channel <#{channelId}> gepostet!',
                                     color=discord.Color.green())
         return deliveredEmbed
     
     def no_argument_embed(self):
-        """TODO"""
+        """returns an embed for the no argument announcement message"""
         noArgumentEmbed = discord.Embed(title=f'{self.annonewTitle} - Gegner Name fehlt.',
                                     description='Du hast keinen Gegner angegeben. Bitte gib den Gegner an, wenn du "Angriffskrieg" oder "Verteidigungskrieg" auswählst.',
                                     color=discord.Color.red())
