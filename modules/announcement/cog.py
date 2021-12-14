@@ -41,15 +41,16 @@ class Announcement(commands.Cog, name="Announcement"):
         __meetingTime = __meetingTime.strftime('%H:%M')
         if type == 'war_agression':
             annoEmbed = discord.Embed(title=f'⚔  Das Kriegshorn ruft - Dein Gouvernement benötigt dich!',
-                                        description=f'Um **{time}** am **{day}** führen wir einen Krieg um **{area}** gegen\n**{enemy}**. Meldet euch bitte in {area}, am War Board (Kriegs Brett) für den Krieg an.',
+                                        description=f'Um **{time}** am **{day}** führen wir einen Krieg um **{area}**\n gegen **{enemy}**. Meldet euch bitte __rechtzeitig__ in {area}, am War Board (Kriegs Brett) für den Krieg an.',
                                         color=discord.Color.green())
-            annoEmbed.add_field(name='ℹ  Zusammenfassung', value=f' - Gebiet: {area}\n - TIME: {day} um {time}\n - Wir sammeln uns: {__meetingTime}\n - Gegner: {enemy}')
-            annoEmbed.add_field(name='🛠  Denkt bitte an', value='- buff food\n- TEST\n- TEST')
+            annoEmbed.add_field(name='ℹ  Zusammenfassung', value=f' - Wo: {area}\n - Wann (Ingame): {day} um {time}\n - Wann (Discord): {__meetingTime}\n - Gegen: {enemy}')
+            annoEmbed.add_field(name='🛠  Denkt bitte an', value='- [buff food](https://www.google.com/)\n- [war builds](https://www.google.com/)')
         elif type == 'war_defense':
             annoEmbed = discord.Embed(title=f'🛡  Das Kriegshorn ruft - Wir werden angegriffen!',
-                                        description=f'**Area:** {area}\n**Type:** {type}\n**Time:** {time}\n**Enemy:** {enemy}',
+                                        description=f'Am **{day}** um **{time}** müssen wir unser geliebtes **{area}**\n gegen **{enemy}** verteidigen. Meldet euch bitte __rechtzeitig__ in {area}, am War Board (Kriegs Brett) für den Krieg an.',
                                         color=discord.Color.green())
-            annoEmbed.add_field(name='Test', value='@everyone', inline=False)
+            annoEmbed.add_field(name='ℹ  Zusammenfassung', value=f' - Wo: {area}\n - Wann (Ingame): {day} um {time}\n - Wann (Discord): {__meetingTime}')
+            annoEmbed.add_field(name='🛠  Denkt bitte an', value='- [buff food](https://www.google.com/)\n- [corrupted perks](https://www.google.com/)')
         botVersion = str(self.config.get('bot_info', 'version'))
         annoEmbed.set_footer(text=f'The Forgotten Team - Forgotten-Hydra Discord Bot {botVersion}', icon_url='https://forgottennw.de/static/logo/company_logo.png')
         return annoEmbed
