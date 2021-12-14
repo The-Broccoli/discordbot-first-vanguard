@@ -81,7 +81,8 @@ class Announcement(commands.Cog, name="Announcement"):
         return noArgumentEmbed
      
     class AnnonewView(View):
-        """TODO"""
+        """Creates a VIEW sup class with dropdown menu and buttons.
+        Interactions return certain values"""
 
         def __init__(self, ctx, config):
             self.ctx = ctx
@@ -109,11 +110,13 @@ class Announcement(commands.Cog, name="Announcement"):
             __areas.append(discord.SelectOption(label=__area, value=__area + ' (' + __areasDic[__area] + ')', description=__areasDic[__area]))
 
         def disabled_all_button(self):
+            """Sets all buttons with specific names to disabled"""
             for b in self.children:
                 if b.custom_id == 'war_agression_button' or b.custom_id == 'war_defense_button' or b.custom_id == 'invasion_button' or b.custom_id == 'cancel_button':
                     b.disabled = True
         
         def enable_select(self):
+            """Sets all dropdown menu with certain names to enabled"""
             for b in self.children:
                 if b.custom_id == 'area_select':
                     b.disabled = False
@@ -189,7 +192,8 @@ class Announcement(commands.Cog, name="Announcement"):
             self.stop()
         
     class TimeView(View):
-        """TODO"""
+        """Creates a VIEW sup class with dropdown menu.
+        Interactions return certain values"""
 
         def __init__(self, ctx, config):
             self.ctx = ctx
@@ -240,7 +244,8 @@ class Announcement(commands.Cog, name="Announcement"):
             self.stop()
 
     class DateView(View):
-        """TODO"""
+        """Creates a VIEW sup class with dropdown menu and buttons.
+        Interactions return certain values"""
 
         def __init__(self, ctx, config):
             self.ctx = ctx
@@ -293,7 +298,8 @@ class Announcement(commands.Cog, name="Announcement"):
             self.stop()
     
     class AnnouncementView(View):
-        """TODO"""
+        """Creates a VIEW sup class with dropdown menu and buttons.
+        Interactions return certain values"""
 
         def __init__(self, ctx, config):
             self.ctx = ctx
@@ -336,13 +342,14 @@ class Announcement(commands.Cog, name="Announcement"):
 
     @commands.command()
     async def annonew(self, ctx: commands.Context, *args: str):
-        """TODO"""
+        """Creates a sequence whereby an announcement 
+        is sent to a target channel at the end."""
+        # command sequence
         try:
             for i in ctx.author.roles:
                 if i.id == int(self.config['role']['bot_commander']):
-                    """TODO"""
+                    # all variable are loaded
                     enemy = ''
-                    shotcallerList = []
                     annoNewEmbed = self.anno_new_embed()
                     announcementChannelId = int(self.config.get('dc_channels', 'announcement_id'))
                     serverId = int(self.config.get('dc_server', 'id'))
@@ -350,6 +357,8 @@ class Announcement(commands.Cog, name="Announcement"):
                     view2 = self.DateView(ctx, self.config)
                     view3 = self.TimeView(ctx, self.config)
                     # ---------- view1 ----------
+                    # AnnonewView and annoNewEmbed is sent to the channel.
+                    # the bot waits for an interaction or a time-out.
                     msg = await ctx.send(embed=annoNewEmbed, view=view1)
                     await view1.wait()
                     if view1.buttonRes == None or view1.slectRes == None or view1.buttonRes == 'CANCEL':
@@ -358,6 +367,8 @@ class Announcement(commands.Cog, name="Announcement"):
                         await msg.delete()
                         return
                     # ---------- view1.5 ----------
+                    # if no argument value is given no_argument_embed 
+                    # is sent and the command is aborted
                     if view1.buttonRes == 'war_defense' or view1.buttonRes == 'war_agression':
                         try:
                             enemy = args[0].replace('_', ' ')
@@ -367,6 +378,8 @@ class Announcement(commands.Cog, name="Announcement"):
                             await msg.delete()
                             return 
                     # ---------- view2 ----------
+                    # DateView is sent to the channel.
+                    # the bot waits for an interaction or a time-out.
                     await msg.edit(view=view2)
                     await view2.wait()
                     if view2.slectRes == None or view2.buttonRes == 'CANCEL':
@@ -375,6 +388,8 @@ class Announcement(commands.Cog, name="Announcement"):
                         await msg.delete()
                         return
                     # ---------- view3 ----------
+                    # TimeView is sent to the channel.
+                    # the bot waits for an interaction or a time-out.
                     await msg.edit(view=view3)
                     await view3.wait()
                     if view3.slectRes == None or view3.buttonRes == 'CANCEL':
@@ -383,6 +398,11 @@ class Announcement(commands.Cog, name="Announcement"):
                         await msg.delete()
                         return
                     # ---------- view4 ----------
+                    # depending on the selection anno_embed_inv or anno_embed_war is loaded
+                    # selection is sent to the channel.
+                    # the bot waits for an interaction or a time-out.
+                    # if the value SEND comes back from the interaction 
+                    # the generated embed is sent to the target channel
                     if enemy == '':
                         annoEmbed = self.anno_embed_inv(view1.slectRes, view2.slectRes, view3.slectRes)
                     else:
