@@ -174,5 +174,16 @@ class Taxes(commands.Cog, name="Taxes"):
         except Exception as e:
             await ctx.send(embed=self.error_embed(e))
 
+    @commands.command()
+    async def blacklist(self, ctx: commands.Context):
+        # command sequence
+        try:
+            for i in ctx.author.roles: # passing through the roles of the author
+                if i.id == int(self.config['role']['bot_commander']):
+                    __blacklist = self.load_blacklist()
+                    await ctx.send(embed = self.blacklist_embed(__blacklist))
+        except Exception as e:
+            await ctx.send(embed=self.error_embed(e))
+
 def setup(bot: commands.Bot):
     bot.add_cog(Taxes(bot))
