@@ -10,6 +10,7 @@ class Announcement(commands.Cog, name="Announcement"):
 
     def __init__(self, bot: commands.Bot):
         self.bot = bot
+        self.annonewTitle = 'Neue Ankündigung'
 
         # Load config
         file = 'config.ini'
@@ -19,37 +20,45 @@ class Announcement(commands.Cog, name="Announcement"):
     
     def error_embed(self, error_message):
         """Returns an error embed"""
-        errorEmbed = discord.Embed(title='Something went wrong!',
+        errorEmbed = discord.Embed(title=f'{self.annonewTitle} - Something went wrong!',
                                     description=f'**This command is not available here**\n||{error_message}||',
                                     color=discord.Color.red())
         return errorEmbed
     
     def anno_new_embed(self):
         """TODO"""
-        annoEmbed = discord.Embed(title='New announcement!',
+        annoEmbed = discord.Embed(title=f'{self.annonewTitle} - INFO EMBED',
                                     description='announcement announcement announcement announcement announcement',
                                     color=discord.Color.green())
         return annoEmbed
     
-    def anno_embed(self, area, type, time, enemy):
+    def anno_embed_war(self, area, type, time, enemy):
         """TODO"""
-        annoEmbed = discord.Embed(title='Announcement',
+        annoEmbed = discord.Embed(title=f'{self.annonewTitle} - anno_embed_war',
                                     description=f'**Area:** {area}\n**Type:** {type}\n**Time:** {time}\n**Enemy:** {enemy}',
+                                    color=discord.Color.green())
+        return annoEmbed
+    
+    def anno_embed_inv(self, area, time):
+        """TODO"""
+        annoEmbed = discord.Embed(title=f'{self.annonewTitle} - anno_embed_inv',
+                                    description=f'**Area:** {area}\n**Time:** {time}',
                                     color=discord.Color.green())
         return annoEmbed
     
     def delivered_embed(self, ctx):
         """TODO"""
-        deliveredEmbed = discord.Embed(title='Announcement delivered!',
+        deliveredEmbed = discord.Embed(title=f'{self.annonewTitle} - delivered!',
                                     description=f'{ctx.message.author.mention}?! Announcement delivered!!!!!',
                                     color=discord.Color.green())
         return deliveredEmbed
     
     def no_argument_embed(self):
         """TODO"""
-        noArgumentEmbed = discord.Embed(title='No Argument!',
-                                    description='Bitte gib den Gegner an\nbuttons "Angriffskrieg" and "Verteidigungskrieg"',
+        noArgumentEmbed = discord.Embed(title=f'{self.annonewTitle} - Gegner Name fehlt.',
+                                    description='Du kannst den Gegner nicht mit einem "_" angeben. Bitte gib den Gegner an, wenn du "Angriffskrieg" oder "Verteidigungskrieg" auswählst.',
                                     color=discord.Color.red())
+        noArgumentEmbed.add_field(name='Beispiele', value='✅ Richtige schreibweiße:\n`>annonew Falling-Moon`\n\n⛔ Falsche Schreibweise:\n`>annonew Falling Moon`')                       
         return noArgumentEmbed
      
     class AnnonewView(View):
@@ -277,11 +286,11 @@ class Announcement(commands.Cog, name="Announcement"):
                     # ---------- view1.5 ----------
                     if view1.buttonRes == 'war_defense' or view1.buttonRes == 'war_agression':
                         try:
-                            enemy = args[0].split('_')
+                            enemy = args[0].replace('_', ' ')
                         except:
                             noArgumentEmbed = self.no_argument_embed()
-                            await msg.delete()
                             await ctx.send(embed=noArgumentEmbed)
+                            await msg.delete()
                             return
                         
                     # ---------- view2 ----------
@@ -293,7 +302,10 @@ class Announcement(commands.Cog, name="Announcement"):
                         await msg.delete()
                         return
                     # ---------- view3 ----------
-                    annoEmbed = self.anno_embed(view1.slectRes, view1.buttonRes, view2.slectRes, enemy)
+                    if enemy == '':
+                        annoEmbed = self.anno_embed_inv(view1.slectRes, view2.slectRes)
+                    else:
+                        annoEmbed = self.anno_embed_war(view1.slectRes, view1.buttonRes, view2.slectRes, enemy)
                     view3 = self.AnnouncementView(ctx, self.config)
                     await msg.edit(embed=annoEmbed , view=view3)
                     await view3.wait()
