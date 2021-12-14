@@ -62,64 +62,23 @@ class Announcement(commands.Cog, name="Announcement"):
             self.config = config 
             self.timeout = int(self.config.get('dc_announcement_commands', 'view_timeout_value'))
             super().__init__(timeout= self.timeout)
-      
-        areas = [
-            discord.SelectOption(
-                label='First Light', 
-                value='First Light', 
-                description='Erstes Licht'
-            ),
-            discord.SelectOption(
-                label='Monach\'s Bluffs', 
-                value='Monach\'s Bluffs', 
-                description='Königsfels'
-            ),
-            discord.SelectOption(
-                label='Everfall', 
-                value='Everfall', 
-                description='Immerfall'
-            ),
-            discord.SelectOption(
-                label='Windsward', 
-                value='Windsward', 
-                description='Windkreis'
-            ),
-            discord.SelectOption(
-                label='Cutless Keys', 
-                value='Cutless Keys', 
-                description='Entermesserriff'
-            ),
-            discord.SelectOption(
-                label='Reekwater', 
-                value='Reekwater', 
-                description='Brackwasser'
-            ),
-            discord.SelectOption(
-                label='Ebonscale Reach', 
-                value='Ebonscale Reach', 
-                description='Ebenmaß'
-            ),
-            discord.SelectOption(
-                label='Brightwood', 
-                value='Brightwood', 
-                description='Lichtholz'
-            ),
-            discord.SelectOption(
-                label='Weaver\'s Fen', 
-                value='Weaver\'s Fen', 
-                description='Webermoor'
-            ),
-            discord.SelectOption(
-                label='Restless Shore', 
-                value='Restless Shore', 
-                description='Unstete Küste'
-            ),
-            discord.SelectOption(
-                label='Mourningdale', 
-                value='Mourningdale', 
-                description='Klagental'
-            )
-        ]
+
+        __areasDic = {
+            'First Light': 'Erstes Licht',
+            'Monach\'s Bluffs': 'Königsfels',
+            'Everfall': 'Immerfall',
+            'Windsward': 'Windkreis',
+            'Cutless Keys': 'Entermesserriff',
+            'Reekwater': 'Brackwasser',
+            'Ebonscale Reach': 'Lichtholz',
+            'Weaver\'s Fen': 'Webermoor',
+            'Restless Shore': 'Unstete Küste',
+            'Mourningdale': 'Klagental',
+        }
+
+        __areas = []
+        for __area in __areasDic:
+            __areas.append(discord.SelectOption(label=__area, value=__area, description=__areasDic[__area]))
 
         def disabled_all_button(self):
             for b in self.children:
@@ -192,7 +151,7 @@ class Announcement(commands.Cog, name="Announcement"):
                             custom_id='area_select',
                             min_values=1, 
                             max_values=1,
-                            options=areas, 
+                            options=__areas, 
                             disabled=True)
         async def select_callback(self, select, interaction: discord.Interaction):
             self.slectRes = interaction.data['values'][0]
