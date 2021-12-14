@@ -34,24 +34,24 @@ class Announcement(commands.Cog, name="Announcement"):
                                     color=discord.Color.green())
         return annoEmbed
     
-    def anno_embed_war(self, area, type, time, enemy, ):
+    def anno_embed_war(self, area, type, day, time, enemy):
         """TODO"""
         __meetingTime = datetime.strptime(time, '%H:%M')
         __meetingTime = __meetingTime - timedelta(minutes=15)
         __meetingTime = __meetingTime.strftime('%H:%M')
         if type == 'war_agression':
             annoEmbed = discord.Embed(title=f'⚔  Das Kriegshorn ruft - Dein Gouvernement benötigt dich!',
-                                        description=f'Um **{time}** Uhr führen wir einen Krieg um **{area}** gegen\n**{enemy}**. Meldet euch bitte in {area}, am War Board (Kriegs Brett) für den Krieg an.',
+                                        description=f'Um **{time}** am **{day}** führen wir einen Krieg um **{area}** gegen\n**{enemy}**. Meldet euch bitte in {area}, am War Board (Kriegs Brett) für den Krieg an.',
                                         color=discord.Color.green())
-            annoEmbed.add_field(name='ℹ  Zusammenfassung', value=f' - Gebiet: {area}\n - Wir sammeln uns: {__meetingTime}\n - Gegner: {enemy}')
-            annoEmbed.add_field(name='🛠  Denkt bitte an', value='- TEST\n- TEST\n- TEST')
+            annoEmbed.add_field(name='ℹ  Zusammenfassung', value=f' - Gebiet: {area}\n - TIME: {day} um {time}\n - Wir sammeln uns: {__meetingTime}\n - Gegner: {enemy}')
+            annoEmbed.add_field(name='🛠  Denkt bitte an', value='- buff food\n- TEST\n- TEST')
         elif type == 'war_defense':
             annoEmbed = discord.Embed(title=f'🛡  Das Kriegshorn ruft - Wir werden angegriffen!',
                                         description=f'**Area:** {area}\n**Type:** {type}\n**Time:** {time}\n**Enemy:** {enemy}',
                                         color=discord.Color.green())
             annoEmbed.add_field(name='Test', value='@everyone', inline=False)
         botVersion = str(self.config.get('bot_info', 'version'))
-        annoEmbed.set_footer(text=f'The Forgotten - Forgotten-Hydra Discord Bot {botVersion}', icon_url='https://forgottennw.de/static/logo/company_logo.png')
+        annoEmbed.set_footer(text=f'The Forgotten Team - Forgotten-Hydra Discord Bot {botVersion}', icon_url='https://forgottennw.de/static/logo/company_logo.png')
         return annoEmbed
     
     def anno_embed_inv(self, area, time):
@@ -223,7 +223,60 @@ class Announcement(commands.Cog, name="Announcement"):
             await interaction.response.edit_message(view=self)
             self.stop()
 
-        @discord.ui.select(placeholder='Wann?',
+        @discord.ui.select(placeholder='Wann? (Uhrzeit)',
+                            custom_id='time_select',
+                            min_values=1, 
+                            max_values=1,
+                            options=time_options)
+        async def select_callback(self, select, interaction: discord.Interaction):
+            self.slectRes = interaction.data['values'][0]
+            select.disabled = True
+            select.placeholder = self.slectRes
+            await interaction.response.edit_message(view=self)
+            self.stop()
+
+    class DateView(View):
+        """TODO"""
+
+        def __init__(self, ctx, config):
+            self.ctx = ctx
+            self.slectRes = None
+            self.buttonRes = None
+            self.config = config
+            self.timeout = int(self.config.get('dc_announcement_commands', 'view_timeout_value'))
+            super().__init__(timeout= self.timeout)
+
+        today = datetime.now()
+        time_options = []
+        for i in range(5):
+            timestr = today + timedelta(days=i)
+            timestr = timestr.strftime("%d.%m (%a)")
+            time_options.append(discord.SelectOption(label=timestr, value=timestr))
+        
+        async def on_timeout(self):
+            timeoutEmbed = discord.Embed(title='Timeout!',
+                                        description=f'Aus versicherungstechnische Gründe haben Sie nur {self.timeout} Sekunden Zeit mit der Nachricht zu interagieren. Führe denn Befehl erneut aus.',
+                                        color=discord.Color.red())
+            await self.ctx.send(embed=timeoutEmbed)
+            self.stop()
+        
+        async def on_error(self, error: Exception, item, interaction): # TODO Not tested!
+            errorEmbed = discord.Embed(title='Something went wrong!',
+                                        description=f'**This command is not available here**\n||{error}||',
+                                        color=discord.Color.red())
+            await interaction.response.send_message(view=errorEmbed)
+            self.stop()
+        
+        @discord.ui.button(label="Abbrechen",
+                            style=discord.ButtonStyle.red,
+                            custom_id="cancel_button",
+                            emoji='✖')
+        async def button_cancel(self, button, interaction):
+            self.buttonRes = 'CANCEL'
+            await interaction.response.edit_message(view=self)
+            self.stop()
+
+        @discord.ui.select(placeholder='Wann? (Datum)',
                             custom_id='time_select',
                             min_values=1, 
                             max_values=1,
@@ -290,6 +343,7 @@ class Announcement(commands.Cog, name="Announcement"):
                     announcementChannelId = int(self.config.get('dc_channels', 'announcement_id'))
                     serverId = int(self.config.get('dc_server', 'id'))
                     view1 = self.AnnonewView(ctx, self.config)
+                    view2 = self.DateView(ctx, self.config)
                     view3 = self.TimeView(ctx, self.config)
                     # ---------- view1 ----------
                     msg = await ctx.send(embed=annoNewEmbed, view=view1)
@@ -307,7 +361,15 @@ class Announcement(commands.Cog, name="Announcement"):
                             noArgumentEmbed = self.no_argument_embed()
                             await ctx.send(embed=noArgumentEmbed)
                             await msg.delete()
-                            return   
+                            return 
+                    # ---------- view2 ----------
+                    await msg.edit(view=view2)
+                    await view2.wait()
+                    if view2.slectRes == None or view2.buttonRes == 'CANCEL':
+                        if view2.buttonRes == 'CANCEL':
+                            await ctx.message.delete()
+                        await msg.delete()
+                        return
                     # ---------- view3 ----------
                     await msg.edit(view=view3)
                     await view3.wait()
@@ -318,9 +380,9 @@ class Announcement(commands.Cog, name="Announcement"):
                         return
                     # ---------- view4 ----------
                     if enemy == '':
-                        annoEmbed = self.anno_embed_inv(view1.slectRes, view3.slectRes)
+                        annoEmbed = self.anno_embed_inv(view1.slectRes, view2.slectRes, view3.slectRes)
                     else:
-                        annoEmbed = self.anno_embed_war(view1.slectRes, view1.buttonRes, view3.slectRes, enemy)
+                        annoEmbed = self.anno_embed_war(view1.slectRes, view1.buttonRes, view2.slectRes, view3.slectRes, enemy)
                     view4 = self.AnnouncementView(ctx, self.config)
                     await msg.edit(embed=annoEmbed , view=view4)
                     await view4.wait()
