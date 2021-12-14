@@ -19,6 +19,9 @@ class Announcement(commands.Cog, name="Announcement"):
         self.config = ConfigParser()
         self.config.read(file)
         del file
+
+        self.logoPath = self.config.get('bot_info', 'logo_path')
+        self.botVersion = str(self.config.get('bot_info', 'version'))
     
     def error_embed(self, error_message):
         """Returns an error embed"""
@@ -29,18 +32,18 @@ class Announcement(commands.Cog, name="Announcement"):
     
     def anno_new_embed(self):
         """TODO"""
-        annoEmbed = discord.Embed(title=f'{self.annonewTitle} - INFO EMBED',
-                                    description='announcement announcement announcement announcement announcement',
+        annoEmbed = discord.Embed(title=f'{self.annonewTitle} - Formular',
+                                    description='Wähle hintereinander bitte folgende Informationen aus\n\n- Art des Events: `Angriffskrieg, Verteidigungskrieg, Invasion`\n- In welchem Gebiet: `Everfall, Windsward, Mourningdale, ...`\n- An welchen Tag: `Tue, Wed, Thu, Fri ...`\n- Um wie viel Uhr: `17:30, 18:00, 18:30, 19:00, ...`',
                                     color=discord.Color.green())
         return annoEmbed
     
-    def anno_embed_war(self, area, type, day, time, enemy):
+    def anno_embed_war(self, type, area, day, time, enemy):
         """TODO"""
         __meetingTime = datetime.strptime(time, '%H:%M')
         __meetingTime = __meetingTime - timedelta(minutes=15)
         __meetingTime = __meetingTime.strftime('%H:%M')
         if type == 'war_agression':
-            annoEmbed = discord.Embed(title=f'⚔  Das Kriegshorn ruft - Dein Gouvernement benötigt dich!',
+            annoEmbed = discord.Embed(title=f'⚔  Das Kriegshorn ruft - Dein Gouverneur benötigt dich!',
                                         description=f'Um **{time}** am **{day}** führen wir einen Krieg um **{area}**\n gegen **{enemy}**. Meldet euch bitte __rechtzeitig__ in {area}, am War Board (Kriegs Brett) für den Krieg an.',
                                         color=discord.Color.green())
             annoEmbed.add_field(name='ℹ  Zusammenfassung', value=f' - Wo: {area}\n - Wann (Ingame): {day} um {time}\n - Wann (Discord): {__meetingTime}\n - Gegen: {enemy}')
@@ -51,28 +54,28 @@ class Announcement(commands.Cog, name="Announcement"):
                                         color=discord.Color.green())
             annoEmbed.add_field(name='ℹ  Zusammenfassung', value=f' - Wo: {area}\n - Wann (Ingame): {day} um {time}\n - Wann (Discord): {__meetingTime}')
             annoEmbed.add_field(name='🛠  Denkt bitte an', value='- [buff food](https://www.google.com/)\n- [corrupted perks](https://www.google.com/)')
-        botVersion = str(self.config.get('bot_info', 'version'))
-        annoEmbed.set_footer(text=f'The Forgotten Team - Forgotten-Hydra Discord Bot {botVersion}', icon_url='https://forgottennw.de/static/logo/company_logo.png')
+        annoEmbed.set_footer(text=f'The Forgotten Team - Forgotten-Hydra Discord Bot {self.botVersion}', icon_url=self.logoPath)
         return annoEmbed
     
-    def anno_embed_inv(self, area, time):
+    def anno_embed_inv(self, area, day, time):
         """TODO"""
         annoEmbed = discord.Embed(title=f'',
-                                    description=f'**Area:** {area}\n**Time:** {time}',
+                                    description=f'**Area:** {area}\n**Time:** {time}\n**Day:** {day}',
                                     color=discord.Color.green())
+        annoEmbed.set_footer(text=f'The Forgotten Team - Forgotten-Hydra Discord Bot {self.botVersion}', icon_url=self.logoPath)
         return annoEmbed
     
-    def delivered_embed(self, ctx):
+    def delivered_embed(self, ctx: commands.Context, channelId):
         """TODO"""
-        deliveredEmbed = discord.Embed(title=f'{self.annonewTitle} - delivered!',
-                                    description=f'{ctx.message.author.mention}?! Announcement delivered!!!!!',
+        deliveredEmbed = discord.Embed(title=f'{self.annonewTitle} - Ankündigung wurde veröffentlicht!',
+                                    description=f'{ctx.message.author.mention} deine Ankündigung wurde im Channel <#{channelId}> gepostet!',
                                     color=discord.Color.green())
         return deliveredEmbed
     
     def no_argument_embed(self):
         """TODO"""
         noArgumentEmbed = discord.Embed(title=f'{self.annonewTitle} - Gegner Name fehlt.',
-                                    description='Du kannst den Gegner nicht mit einem "_" angeben. Bitte gib den Gegner an, wenn du "Angriffskrieg" oder "Verteidigungskrieg" auswählst.',
+                                    description='Du hast keinen Gegner angegeben. Bitte gib den Gegner an, wenn du "Angriffskrieg" oder "Verteidigungskrieg" auswählst.',
                                     color=discord.Color.red())
         noArgumentEmbed.add_field(name='Beispiele', value='✅ Richtige schreibweiße:\n`>annonew Falling-Moon`\n\n⛔ Falsche Schreibweise:\n`>annonew Falling Moon`')                       
         return noArgumentEmbed
@@ -314,9 +317,9 @@ class Announcement(commands.Cog, name="Announcement"):
             self.stop()
         
         @discord.ui.button(label="Absenden",
-                            style=discord.ButtonStyle.primary,
+                            style=discord.ButtonStyle.green,
                             custom_id="send_button",
-                            emoji='✔')
+                            emoji='💌')
         async def button_send(self, button, interaction):
             self.buttonRes = 'SEND'
             await interaction.response.edit_message(view=self)
@@ -383,7 +386,7 @@ class Announcement(commands.Cog, name="Announcement"):
                     if enemy == '':
                         annoEmbed = self.anno_embed_inv(view1.slectRes, view2.slectRes, view3.slectRes)
                     else:
-                        annoEmbed = self.anno_embed_war(view1.slectRes, view1.buttonRes, view2.slectRes, view3.slectRes, enemy)
+                        annoEmbed = self.anno_embed_war(view1.buttonRes, view1.slectRes, view2.slectRes, view3.slectRes, enemy)
                     view4 = self.AnnouncementView(ctx, self.config)
                     await msg.edit(embed=annoEmbed , view=view4)
                     await view4.wait()
@@ -394,8 +397,8 @@ class Announcement(commands.Cog, name="Announcement"):
                         return
                     if view4.buttonRes == 'SEND':
                         if ctx.guild.id == serverId:
-                            await self.bot.get_channel(announcementChannelId).send(embed=annoEmbed)
-                        deliveredEmbed = self.delivered_embed(ctx)
+                            await self.bot.get_channel(announcementChannelId).send('@everyone', embed=annoEmbed)
+                        deliveredEmbed = self.delivered_embed(ctx, announcementChannelId)
                         await ctx.send(embed=deliveredEmbed)
                         await msg.delete()
         except Exception as e:
