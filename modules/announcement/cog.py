@@ -1,7 +1,9 @@
 from configparser import ConfigParser
+from datetime import datetime, timedelta
 
 import discord
 from discord.ext import commands
+from discord.member import M
 from discord.ui.view import View
 
 
@@ -32,16 +34,29 @@ class Announcement(commands.Cog, name="Announcement"):
                                     color=discord.Color.green())
         return annoEmbed
     
-    def anno_embed_war(self, area, type, time, enemy):
+    def anno_embed_war(self, area, type, time, enemy, ):
         """TODO"""
-        annoEmbed = discord.Embed(title=f'{self.annonewTitle} - anno_embed_war',
-                                    description=f'**Area:** {area}\n**Type:** {type}\n**Time:** {time}\n**Enemy:** {enemy}',
-                                    color=discord.Color.green())
+        __meetingTime = datetime.strptime(time, '%H:%M')
+        __meetingTime = __meetingTime - timedelta(minutes=15)
+        __meetingTime = __meetingTime.strftime('%H:%M')
+        if type == 'war_agression':
+            annoEmbed = discord.Embed(title=f'⚔  Das Kriegshorn ruft - Dein Gouvernement benötigt dich!',
+                                        description=f'Um **{time}** Uhr führen wir einen Krieg um **{area}** gegen\n**{enemy}**. Meldet euch bitte in {area}, am War Board (Kriegs Brett) für den Krieg an.',
+                                        color=discord.Color.green())
+            annoEmbed.add_field(name='ℹ  Zusammenfassung', value=f' - Gebiet: {area}\n - Wir sammeln uns: {__meetingTime}\n - Gegner: {enemy}')
+            annoEmbed.add_field(name='🛠  Denkt bitte an', value='- TEST\n- TEST\n- TEST')
+        elif type == 'war_defense':
+            annoEmbed = discord.Embed(title=f'🛡  Das Kriegshorn ruft - Wir werden angegriffen!',
+                                        description=f'**Area:** {area}\n**Type:** {type}\n**Time:** {time}\n**Enemy:** {enemy}',
+                                        color=discord.Color.green())
+            annoEmbed.add_field(name='Test', value='@everyone', inline=False)
+        botVersion = str(self.config.get('bot_info', 'version'))
+        annoEmbed.set_footer(text=f'The Forgotten - Forgotten-Hydra Discord Bot {botVersion}', icon_url='https://forgottennw.de/static/logo/company_logo.png')
         return annoEmbed
     
     def anno_embed_inv(self, area, time):
         """TODO"""
-        annoEmbed = discord.Embed(title=f'{self.annonewTitle} - anno_embed_inv',
+        annoEmbed = discord.Embed(title=f'',
                                     description=f'**Area:** {area}\n**Time:** {time}',
                                     color=discord.Color.green())
         return annoEmbed
@@ -87,7 +102,7 @@ class Announcement(commands.Cog, name="Announcement"):
 
         __areas = []
         for __area in __areasDic:
-            __areas.append(discord.SelectOption(label=__area, value=__area, description=__areasDic[__area]))
+            __areas.append(discord.SelectOption(label=__area, value=__area + ' (' + __areasDic[__area] + ')', description=__areasDic[__area]))
 
         def disabled_all_button(self):
             for b in self.children:
@@ -270,11 +285,12 @@ class Announcement(commands.Cog, name="Announcement"):
                 if i.id == int(self.config['role']['bot_commander']):
                     """TODO"""
                     enemy = ''
+                    shotcallerList = []
                     annoNewEmbed = self.anno_new_embed()
                     announcementChannelId = int(self.config.get('dc_channels', 'announcement_id'))
                     serverId = int(self.config.get('dc_server', 'id'))
                     view1 = self.AnnonewView(ctx, self.config)
-                    view2 = self.TimeView(ctx, self.config)
+                    view3 = self.TimeView(ctx, self.config)
                     # ---------- view1 ----------
                     msg = await ctx.send(embed=annoNewEmbed, view=view1)
                     await view1.wait()
@@ -291,30 +307,29 @@ class Announcement(commands.Cog, name="Announcement"):
                             noArgumentEmbed = self.no_argument_embed()
                             await ctx.send(embed=noArgumentEmbed)
                             await msg.delete()
-                            return
-                        
-                    # ---------- view2 ----------
-                    await msg.edit(view=view2)
-                    await view2.wait()
-                    if view2.slectRes == None or view2.buttonRes == 'CANCEL':
-                        if view2.buttonRes == 'CANCEL':
-                            await ctx.message.delete()
-                        await msg.delete()
-                        return
+                            return   
                     # ---------- view3 ----------
-                    if enemy == '':
-                        annoEmbed = self.anno_embed_inv(view1.slectRes, view2.slectRes)
-                    else:
-                        annoEmbed = self.anno_embed_war(view1.slectRes, view1.buttonRes, view2.slectRes, enemy)
-                    view3 = self.AnnouncementView(ctx, self.config)
-                    await msg.edit(embed=annoEmbed , view=view3)
+                    await msg.edit(view=view3)
                     await view3.wait()
-                    if view3.buttonRes == None or view3.buttonRes == 'CANCEL':
+                    if view3.slectRes == None or view3.buttonRes == 'CANCEL':
                         if view3.buttonRes == 'CANCEL':
                             await ctx.message.delete()
                         await msg.delete()
                         return
-                    if view3.buttonRes == 'SEND':
+                    # ---------- view4 ----------
+                    if enemy == '':
+                        annoEmbed = self.anno_embed_inv(view1.slectRes, view3.slectRes)
+                    else:
+                        annoEmbed = self.anno_embed_war(view1.slectRes, view1.buttonRes, view3.slectRes, enemy)
+                    view4 = self.AnnouncementView(ctx, self.config)
+                    await msg.edit(embed=annoEmbed , view=view4)
+                    await view4.wait()
+                    if view4.buttonRes == None or view4.buttonRes == 'CANCEL':
+                        if view4.buttonRes == 'CANCEL':
+                            await ctx.message.delete()
+                        await msg.delete()
+                        return
+                    if view4.buttonRes == 'SEND':
                         if ctx.guild.id == serverId:
                             await self.bot.get_channel(announcementChannelId).send(embed=annoEmbed)
                         deliveredEmbed = self.delivered_embed(ctx)
