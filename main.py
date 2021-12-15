@@ -19,7 +19,7 @@ def main():
     # Ready message
     @client.event
     async def on_ready():
-        '''Sends a message to the welcome channel and the console when the bot is ready'''
+        """Sends a message to the welcome channel and the console when the bot is ready"""
         # channel = client.get_channel(int(config['dc_channels']['wellcome_id']))
         # await channel.send(f'{client.user} is ready!')
         print('We have logged in as {0.user}'.format(client))
