@@ -40,28 +40,33 @@ class Announcement(commands.Cog, name="Announcement"):
     def anno_embed_war(self, type, area, day, time, enemy):
         """Returns an embed for the war announcement message"""
         __meetingTime = datetime.strptime(time, '%H:%M')
-        __meetingTime = __meetingTime - timedelta(minutes=15)
+        __meetingTime = __meetingTime - timedelta(minutes=30)
         __meetingTime = __meetingTime.strftime('%H:%M')
         if type == 'war_agression':
             annoEmbed = discord.Embed(title=f'⚔  Das Kriegshorn ruft - Dein Gouverneur benötigt dich!',
                                         description=f'Um **{time}** am **{day}** führen wir einen Krieg um **{area}**\n gegen **{enemy}**. Meldet euch bitte __rechtzeitig__ in {area}, am War Board (Kriegs Brett) für den Krieg an.',
                                         color=discord.Color.green())
-            annoEmbed.add_field(name='ℹ  Zusammenfassung', value=f' - Wo: {area}\n - Wann (Ingame): {day} um {time}\n - Wann (Discord): {__meetingTime}\n - Gegen: {enemy}')
+            annoEmbed.add_field(name='ℹ  Zusammenfassung', value=f' - Wo: `{area}`\n - Wann (Ingame): `{day}` um `{time}`\n - Wann (Discord): `{__meetingTime}`\n - Gegen: `{enemy}`')
             annoEmbed.add_field(name='🛠  Denkt bitte an', value='- [buff food](https://www.google.com/)\n- [war builds](https://www.google.com/)')
         elif type == 'war_defense':
             annoEmbed = discord.Embed(title=f'🛡  Das Kriegshorn ruft - Wir werden angegriffen!',
                                         description=f'Am **{day}** um **{time}** müssen wir unser geliebtes **{area}**\n gegen **{enemy}** verteidigen. Meldet euch bitte __rechtzeitig__ in {area}, am War Board (Kriegs Brett) für den Krieg an.',
                                         color=discord.Color.green())
-            annoEmbed.add_field(name='ℹ  Zusammenfassung', value=f' - Wo: {area}\n - Wann (Ingame): {day} um {time}\n - Wann (Discord): {__meetingTime}')
+            annoEmbed.add_field(name='ℹ  Zusammenfassung', value=f' - Wo: `{area}`\n - Wann (Ingame): `{day}` um `{time}`\n - Wann (Discord): `{__meetingTime}`')
             annoEmbed.add_field(name='🛠  Denkt bitte an', value='- [buff food](https://www.google.com/)\n- [corrupted perks](https://www.google.com/)')
         annoEmbed.set_footer(text=f'The Forgotten Team - Forgotten-Hydra Discord Bot {self.botVersion}', icon_url=self.logoPath)
         return annoEmbed
     
     def anno_embed_inv(self, area, day, time):
         """Returns an embed for the invasion announcement message"""
-        annoEmbed = discord.Embed(title=f'',
-                                    description=f'**Area:** {area}\n**Time:** {time}\n**Day:** {day}',
+        __meetingTime = datetime.strptime(time, '%H:%M')
+        __meetingTime = __meetingTime - timedelta(minutes=15)
+        __meetingTime = __meetingTime.strftime('%H:%M')
+        annoEmbed = discord.Embed(title=f'👺  Das Kriegshorn ruft - Complete Invasions!',
+                                    description=f'Am **{day}** um **{time}** fällt die Korruption in unser geliebtes **{area}** ein. Meldet euch bitte rechtzeitig in **{area}**, am War Board (Kriegs Brett) für den Invasions an.',
                                     color=discord.Color.green())
+        annoEmbed.add_field(name='ℹ  Zusammenfassung', value=f' - Wo: `{area}`\n - Wann (Ingame): `{day}` um `{time}`\n - Wann (Discord): `{__meetingTime}`')
+        annoEmbed.add_field(name='🛠  Denkt bitte an', value='- [buff food](https://www.google.com/)\n- [corrupted perks](https://www.google.com/)')
         annoEmbed.set_footer(text=f'The Forgotten Team - Forgotten-Hydra Discord Bot {self.botVersion}', icon_url=self.logoPath)
         return annoEmbed
     
