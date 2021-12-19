@@ -27,8 +27,9 @@ def main():
     for folder in os.listdir("modules"):
         if os.path.exists(os.path.join('modules', folder, 'cog.py')):
             client.load_extension(f'modules.{folder}.cog')
-    
+
     client.run(config.get('bot_info', 'token'))
+
 
 if __name__ == '__main__':
     main()

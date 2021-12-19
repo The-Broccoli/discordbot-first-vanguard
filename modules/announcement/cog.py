@@ -3,7 +3,6 @@ from datetime import datetime, timedelta
 
 import discord
 from discord.ext import commands
-from discord.member import M
 from discord.ui.view import View
 
 
@@ -22,21 +21,21 @@ class Announcement(commands.Cog, name="Announcement"):
 
         self.logoPath = self.config.get('bot_info', 'logo_path')
         self.botVersion = str(self.config.get('bot_info', 'version'))
-    
+
     def error_embed(self, error_message):
         """Returns an error embed for a error message"""
         errorEmbed = discord.Embed(title=f'{self.annonewTitle} - Something went wrong!',
                                     description=f'**This command is not available here**\n||{error_message}||',
                                     color=discord.Color.red())
         return errorEmbed
-    
+
     def anno_new_embed(self):
         """Returns an embed for the new announcement command"""
         annoEmbed = discord.Embed(title=f'{self.annonewTitle} - Formular',
                                     description='Wähle hintereinander bitte folgende Informationen aus\n\n- Art des Events: `Angriffskrieg, Verteidigungskrieg, Invasion`\n- In welchem Gebiet: `Everfall, Windsward, Mourningdale, ...`\n- An welchen Tag: `Tue, Wed, Thu, Fri ...`\n- Um wie viel Uhr: `17:30, 18:00, 18:30, 19:00, ...`',
                                     color=discord.Color.green())
         return annoEmbed
-    
+
     def anno_embed_war(self, type, area, day, time, enemy):
         """Returns an embed for the war announcement message"""
         __meetingTime = datetime.strptime(time, '%H:%M')
@@ -56,7 +55,7 @@ class Announcement(commands.Cog, name="Announcement"):
             annoEmbed.add_field(name='🛠  Denkt bitte an', value='- [buff food](https://www.google.com/)\n- [corrupted perks](https://www.google.com/)')
         annoEmbed.set_footer(text=f'The Forgotten Team - Forgotten-Hydra Discord Bot {self.botVersion}', icon_url=self.logoPath)
         return annoEmbed
-    
+
     def anno_embed_inv(self, area, day, time):
         """Returns an embed for the invasion announcement message"""
         __meetingTime = datetime.strptime(time, '%H:%M')
@@ -69,14 +68,14 @@ class Announcement(commands.Cog, name="Announcement"):
         annoEmbed.add_field(name='🛠  Denkt bitte an', value='- [buff food](https://www.google.com/)\n- [corrupted perks](https://www.google.com/)')
         annoEmbed.set_footer(text=f'The Forgotten Team - Forgotten-Hydra Discord Bot {self.botVersion}', icon_url=self.logoPath)
         return annoEmbed
-    
+
     def delivered_embed(self, ctx: commands.Context, channelId):
         """returns an embed for the delivered announcement message"""
         deliveredEmbed = discord.Embed(title=f'{self.annonewTitle} - Ankündigung wurde veröffentlicht!',
                                     description=f'{ctx.message.author.mention} deine Ankündigung wurde im Channel <#{channelId}> gepostet!',
                                     color=discord.Color.green())
         return deliveredEmbed
-    
+
     def no_argument_embed(self):
         """returns an embed for the no argument announcement message"""
         noArgumentEmbed = discord.Embed(title=f'{self.annonewTitle} - Gegner Name fehlt.',
@@ -84,7 +83,7 @@ class Announcement(commands.Cog, name="Announcement"):
                                     color=discord.Color.red())
         noArgumentEmbed.add_field(name='Beispiele', value='✅ Richtige schreibweiße:\n`>annonew Falling-Moon`\n\n⛔ Falsche Schreibweise:\n`>annonew Falling Moon`')                       
         return noArgumentEmbed
-     
+
     class AnnonewView(View):
         """Creates a VIEW sup class with dropdown menu and buttons.
         Interactions return certain values"""
@@ -119,20 +118,20 @@ class Announcement(commands.Cog, name="Announcement"):
             for b in self.children:
                 if b.custom_id == 'war_agression_button' or b.custom_id == 'war_defense_button' or b.custom_id == 'invasion_button' or b.custom_id == 'cancel_button':
                     b.disabled = True
-        
+
         def enable_select(self):
             """Sets all dropdown menu with certain names to enabled"""
             for b in self.children:
                 if b.custom_id == 'area_select':
                     b.disabled = False
-        
+
         async def on_timeout(self):
             timeoutEmbed = discord.Embed(title='Timeout!',
                                         description=f'Aus versicherungstechnische Gründe haben Sie nur {self.timeout} Sekunden Zeit mit der Nachricht zu interagieren. Führe denn Befehl erneut aus.',
                                         color=discord.Color.red())
             await self.ctx.send(embed=timeoutEmbed)
             self.stop()
-        
+
         async def on_error(self, error: Exception, item, interaction): # TODO Not tested!
             errorEmbed = discord.Embed(title='Something went wrong!',
                                         description=f'**This command is not available here**\n||{error}||',
@@ -150,7 +149,7 @@ class Announcement(commands.Cog, name="Announcement"):
             button.style = discord.ButtonStyle.primary
             self.enable_select()
             await interaction.response.edit_message(view=self)
-        
+
         @discord.ui.button(label="Verteidigungskrieg",
                             style=discord.ButtonStyle.secondary,
                             custom_id="war_defense_button",
@@ -161,7 +160,7 @@ class Announcement(commands.Cog, name="Announcement"):
             button.style = discord.ButtonStyle.primary
             self.enable_select()
             await interaction.response.edit_message(view=self)
-        
+
         @discord.ui.button(label="Invasion",
                             style=discord.ButtonStyle.secondary,
                             custom_id="invasion_button",
@@ -172,7 +171,7 @@ class Announcement(commands.Cog, name="Announcement"):
             button.style = discord.ButtonStyle.primary
             self.enable_select()
             await interaction.response.edit_message(view=self)
-        
+
         @discord.ui.button(label="Abbrechen",
                             style=discord.ButtonStyle.red,
                             custom_id="cancel_button",
@@ -182,7 +181,7 @@ class Announcement(commands.Cog, name="Announcement"):
             self.disabled_all_button()
             await interaction.response.edit_message(view=self)
             self.stop()
-        
+
         @discord.ui.select(placeholder='Wo?',
                             custom_id='area_select',
                             min_values=1, 
@@ -195,11 +194,10 @@ class Announcement(commands.Cog, name="Announcement"):
             select.placeholder = self.slectRes
             await interaction.response.edit_message(view=self)
             self.stop()
-        
+
     class TimeView(View):
         """Creates a VIEW sup class with dropdown menu.
         Interactions return certain values"""
-
         def __init__(self, ctx, config):
             self.ctx = ctx
             self.slectRes = None
@@ -251,7 +249,6 @@ class Announcement(commands.Cog, name="Announcement"):
     class DateView(View):
         """Creates a VIEW sup class with dropdown menu and buttons.
         Interactions return certain values"""
-
         def __init__(self, ctx, config):
             self.ctx = ctx
             self.slectRes = None
@@ -305,7 +302,6 @@ class Announcement(commands.Cog, name="Announcement"):
     class AnnouncementView(View):
         """Creates a VIEW sup class with dropdown menu and buttons.
         Interactions return certain values"""
-
         def __init__(self, ctx, config):
             self.ctx = ctx
             self.buttonRes = None
@@ -426,6 +422,7 @@ class Announcement(commands.Cog, name="Announcement"):
                         deliveredEmbed = self.delivered_embed(ctx, announcementChannelId)
                         await ctx.send(embed=deliveredEmbed)
                         await msg.delete()
+                    del view1, view2, view3, view4, msg, annoNewEmbed, annoEmbed, deliveredEmbed
         except Exception as e:
             await ctx.send(embed=self.error_embed(e))
 
