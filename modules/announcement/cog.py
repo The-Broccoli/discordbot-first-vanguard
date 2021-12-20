@@ -11,7 +11,7 @@ class Announcement(commands.Cog, name="Announcement"):
     """TODO"""
 
     def __init__(self, bot: commands.Bot):
-        self.log = UserLoggingHandler()
+        self.log = UserLoggingHandler('announcement')
         self.bot = bot
         self.annonewTitle = 'Neue Ankündigung'
 

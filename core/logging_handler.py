@@ -13,10 +13,10 @@ class bcolors:
 
 class UserLoggingHandler():
 
-    def __init__(self):
+    def __init__(self, name: str):
 
         # create a logger
-        self.logger = logging.getLogger("main-user")
+        self.logger = logging.getLogger("main-user-"+name)
 
         # create a logging format
         hdlr = logging.StreamHandler()
