@@ -2,6 +2,7 @@ from configparser import ConfigParser
 from datetime import datetime, timedelta
 
 import discord
+from core.logging_handler import UserLoggingHandler
 from discord.ext import commands
 from discord.ui.view import View
 
@@ -10,6 +11,7 @@ class Announcement(commands.Cog, name="Announcement"):
     """TODO"""
 
     def __init__(self, bot: commands.Bot):
+        self.log = UserLoggingHandler('announcement')
         self.bot = bot
         self.annonewTitle = 'Neue Ankündigung'
 
@@ -25,15 +27,15 @@ class Announcement(commands.Cog, name="Announcement"):
     def error_embed(self, error_message):
         """Returns an error embed for a error message"""
         errorEmbed = discord.Embed(title=f'{self.annonewTitle} - Something went wrong!',
-                                    description=f'**This command is not available here**\n||{error_message}||',
-                                    color=discord.Color.red())
+                                   description=f'**This command is not available here**\n||{error_message}||',
+                                   color=discord.Color.red())
         return errorEmbed
 
     def anno_new_embed(self):
         """Returns an embed for the new announcement command"""
         annoEmbed = discord.Embed(title=f'{self.annonewTitle} - Formular',
-                                    description='Wähle hintereinander bitte folgende Informationen aus\n\n- Art des Events: `Angriffskrieg, Verteidigungskrieg, Invasion`\n- In welchem Gebiet: `Everfall, Windsward, Mourningdale, ...`\n- An welchen Tag: `Tue, Wed, Thu, Fri ...`\n- Um wie viel Uhr: `17:30, 18:00, 18:30, 19:00, ...`',
-                                    color=discord.Color.green())
+                                  description='Wähle hintereinander bitte folgende Informationen aus\n\n- Art des Events: `Angriffskrieg, Verteidigungskrieg, Invasion`\n- In welchem Gebiet: `Everfall, Windsward, Mourningdale, ...`\n- An welchen Tag: `Tue, Wed, Thu, Fri ...`\n- Um wie viel Uhr: `17:30, 18:00, 18:30, 19:00, ...`',
+                                  color=discord.Color.green())
         return annoEmbed
 
     def anno_embed_war(self, type, area, day, time, enemy):
@@ -43,17 +45,22 @@ class Announcement(commands.Cog, name="Announcement"):
         __meetingTime = __meetingTime.strftime('%H:%M')
         if type == 'war_agression':
             annoEmbed = discord.Embed(title=f'⚔  Das Kriegshorn ruft - Dein Gouverneur benötigt dich!',
-                                        description=f'Um **{time}** am **{day}** führen wir einen Krieg um **{area}**\n gegen **{enemy}**. Meldet euch bitte __rechtzeitig__ in {area}, am War Board (Kriegs Brett) für den Krieg an.',
-                                        color=discord.Color.green())
-            annoEmbed.add_field(name='ℹ  Zusammenfassung', value=f' - Wo: `{area}`\n - Wann (Ingame): `{day}` um `{time}`\n - Wann (Discord): `{__meetingTime}`\n - Gegen: `{enemy}`')
-            annoEmbed.add_field(name='🛠  Denkt bitte an', value='- [buff food](https://www.google.com/)\n- [war builds](https://www.google.com/)')
+                                      description=f'Um **{time}** am **{day}** führen wir einen Krieg um **{area}**\n gegen **{enemy}**. Meldet euch bitte __rechtzeitig__ in {area}, am War Board (Kriegs Brett) für den Krieg an.',
+                                      color=discord.Color.green())
+            annoEmbed.add_field(
+                name='ℹ  Zusammenfassung', value=f' - Wo: `{area}`\n - Wann (Ingame): `{day}` um `{time}`\n - Wann (Discord): `{__meetingTime}`\n - Gegen: `{enemy}`')
+            annoEmbed.add_field(
+                name='🛠  Denkt bitte an', value='- [buff food](https://www.google.com/)\n- [war builds](https://www.google.com/)')
         elif type == 'war_defense':
             annoEmbed = discord.Embed(title=f'🛡  Das Kriegshorn ruft - Wir werden angegriffen!',
-                                        description=f'Am **{day}** um **{time}** müssen wir unser geliebtes **{area}**\n gegen **{enemy}** verteidigen. Meldet euch bitte __rechtzeitig__ in {area}, am War Board (Kriegs Brett) für den Krieg an.',
-                                        color=discord.Color.green())
-            annoEmbed.add_field(name='ℹ  Zusammenfassung', value=f' - Wo: `{area}`\n - Wann (Ingame): `{day}` um `{time}`\n - Wann (Discord): `{__meetingTime}`')
-            annoEmbed.add_field(name='🛠  Denkt bitte an', value='- [buff food](https://www.google.com/)\n- [corrupted perks](https://www.google.com/)')
-        annoEmbed.set_footer(text=f'The Forgotten Team - Forgotten-Hydra Discord Bot {self.botVersion}', icon_url=self.logoPath)
+                                      description=f'Am **{day}** um **{time}** müssen wir unser geliebtes **{area}**\n gegen **{enemy}** verteidigen. Meldet euch bitte __rechtzeitig__ in {area}, am War Board (Kriegs Brett) für den Krieg an.',
+                                      color=discord.Color.green())
+            annoEmbed.add_field(
+                name='ℹ  Zusammenfassung', value=f' - Wo: `{area}`\n - Wann (Ingame): `{day}` um `{time}`\n - Wann (Discord): `{__meetingTime}`')
+            annoEmbed.add_field(
+                name='🛠  Denkt bitte an', value='- [buff food](https://www.google.com/)\n- [corrupted perks](https://www.google.com/)')
+        annoEmbed.set_footer(
+            text=f'The Forgotten Team - Forgotten-Hydra Discord Bot {self.botVersion}', icon_url=self.logoPath)
         return annoEmbed
 
     def anno_embed_inv(self, area, day, time):
@@ -62,39 +69,45 @@ class Announcement(commands.Cog, name="Announcement"):
         __meetingTime = __meetingTime - timedelta(minutes=15)
         __meetingTime = __meetingTime.strftime('%H:%M')
         annoEmbed = discord.Embed(title=f'👺  Das Kriegshorn ruft - Complete Invasions!',
-                                    description=f'Am **{day}** um **{time}** fällt die Korruption in unser geliebtes **{area}** ein. Meldet euch bitte rechtzeitig in **{area}**, am War Board (Kriegs Brett) für den Invasions an.',
-                                    color=discord.Color.green())
-        annoEmbed.add_field(name='ℹ  Zusammenfassung', value=f' - Wo: `{area}`\n - Wann (Ingame): `{day}` um `{time}`\n - Wann (Discord): `{__meetingTime}`')
-        annoEmbed.add_field(name='🛠  Denkt bitte an', value='- [buff food](https://www.google.com/)\n- [corrupted perks](https://www.google.com/)')
-        annoEmbed.set_footer(text=f'The Forgotten Team - Forgotten-Hydra Discord Bot {self.botVersion}', icon_url=self.logoPath)
+                                  description=f'Am **{day}** um **{time}** fällt die Korruption in unser geliebtes **{area}** ein. Meldet euch bitte rechtzeitig in **{area}**, am War Board (Kriegs Brett) für den Invasions an.',
+                                  color=discord.Color.green())
+        annoEmbed.add_field(name='ℹ  Zusammenfassung',
+                            value=f' - Wo: `{area}`\n - Wann (Ingame): `{day}` um `{time}`\n - Wann (Discord): `{__meetingTime}`')
+        annoEmbed.add_field(name='🛠  Denkt bitte an',
+                            value='- [buff food](https://www.google.com/)\n- [corrupted perks](https://www.google.com/)')
+        annoEmbed.set_footer(
+            text=f'The Forgotten Team - Forgotten-Hydra Discord Bot {self.botVersion}', icon_url=self.logoPath)
         return annoEmbed
 
     def delivered_embed(self, ctx: commands.Context, channelId):
         """returns an embed for the delivered announcement message"""
         deliveredEmbed = discord.Embed(title=f'{self.annonewTitle} - Ankündigung wurde veröffentlicht!',
-                                    description=f'{ctx.message.author.mention} deine Ankündigung wurde im Channel <#{channelId}> gepostet!',
-                                    color=discord.Color.green())
+                                       description=f'{ctx.message.author.mention} deine Ankündigung wurde im Channel <#{channelId}> gepostet!',
+                                       color=discord.Color.green())
         return deliveredEmbed
 
     def no_argument_embed(self):
         """returns an embed for the no argument announcement message"""
         noArgumentEmbed = discord.Embed(title=f'{self.annonewTitle} - Gegner Name fehlt.',
-                                    description='Du hast keinen Gegner angegeben. Bitte gib den Gegner an, wenn du "Angriffskrieg" oder "Verteidigungskrieg" auswählst.',
-                                    color=discord.Color.red())
-        noArgumentEmbed.add_field(name='Beispiele', value='✅ Richtige schreibweiße:\n`>annonew Falling-Moon`\n\n⛔ Falsche Schreibweise:\n`>annonew Falling Moon`')                       
+                                        description='Du hast keinen Gegner angegeben. Bitte gib den Gegner an, wenn du "Angriffskrieg" oder "Verteidigungskrieg" auswählst.',
+                                        color=discord.Color.red())
+        noArgumentEmbed.add_field(
+            name='Beispiele', value='✅ Richtige schreibweiße:\n`>annonew Falling-Moon`\n\n⛔ Falsche Schreibweise:\n`>annonew Falling Moon`')
         return noArgumentEmbed
 
     class AnnonewView(View):
         """Creates a VIEW sup class with dropdown menu and buttons.
         Interactions return certain values"""
 
-        def __init__(self, ctx, config):
+        def __init__(self, ctx: commands.Context, config, log: UserLoggingHandler):
+            self.log = log
             self.ctx = ctx
             self.buttonRes = None
             self.slectRes = None
-            self.config = config 
-            self.timeout = int(self.config.get('dc_announcement_commands', 'view_timeout_value'))
-            super().__init__(timeout= self.timeout)
+            self.config = config
+            self.timeout = int(self.config.get(
+                'dc_announcement_commands', 'view_timeout_value'))
+            super().__init__(timeout=self.timeout)
 
         __areasDic = {
             'First Light': 'Erstes Licht',
@@ -111,7 +124,8 @@ class Announcement(commands.Cog, name="Announcement"):
 
         __areas = []
         for __area in __areasDic:
-            __areas.append(discord.SelectOption(label=__area, value=__area + ' (' + __areasDic[__area] + ')', description=__areasDic[__area]))
+            __areas.append(discord.SelectOption(label=__area, value=__area +
+                           ' (' + __areasDic[__area] + ')', description=__areasDic[__area]))
 
         def disabled_all_button(self):
             """Sets all buttons with specific names to disabled"""
@@ -127,22 +141,23 @@ class Announcement(commands.Cog, name="Announcement"):
 
         async def on_timeout(self):
             timeoutEmbed = discord.Embed(title='Timeout!',
-                                        description=f'Aus versicherungstechnische Gründe haben Sie nur {self.timeout} Sekunden Zeit mit der Nachricht zu interagieren. Führe denn Befehl erneut aus.',
-                                        color=discord.Color.red())
+                                         description=f'Aus versicherungstechnische Gründe haben Sie nur {self.timeout} Sekunden Zeit mit der Nachricht zu interagieren. Führe denn Befehl erneut aus.',
+                                         color=discord.Color.red())
             await self.ctx.send(embed=timeoutEmbed)
             self.stop()
 
-        async def on_error(self, error: Exception, item, interaction): # TODO Not tested!
+        async def on_error(self, error: Exception, item, interaction):  # TODO Not tested!
             errorEmbed = discord.Embed(title='Something went wrong!',
-                                        description=f'**This command is not available here**\n||{error}||',
-                                        color=discord.Color.red())
+                                       description=f'**This command is not available here**\n||{error}||',
+                                       color=discord.Color.red())
             await interaction.response.send_message(view=errorEmbed)
+            self.log.warning(f'[{self.ctx.author}] Error by annonew command ({error})')
             self.stop()
 
         @discord.ui.button(label="Angriffskrieg",
-                            style=discord.ButtonStyle.secondary,
-                            custom_id="war_agression_button",
-                            emoji='⚔')
+                           style=discord.ButtonStyle.secondary,
+                           custom_id="war_agression_button",
+                           emoji='⚔')
         async def button_war_agression(self, button, interaction):
             self.buttonRes = 'war_agression'
             self.disabled_all_button()
@@ -151,9 +166,9 @@ class Announcement(commands.Cog, name="Announcement"):
             await interaction.response.edit_message(view=self)
 
         @discord.ui.button(label="Verteidigungskrieg",
-                            style=discord.ButtonStyle.secondary,
-                            custom_id="war_defense_button",
-                            emoji='🛡')
+                           style=discord.ButtonStyle.secondary,
+                           custom_id="war_defense_button",
+                           emoji='🛡')
         async def button_war_defense(self, button, interaction):
             self.buttonRes = 'war_defense'
             self.disabled_all_button()
@@ -162,9 +177,9 @@ class Announcement(commands.Cog, name="Announcement"):
             await interaction.response.edit_message(view=self)
 
         @discord.ui.button(label="Invasion",
-                            style=discord.ButtonStyle.secondary,
-                            custom_id="invasion_button",
-                            emoji='🕷')
+                           style=discord.ButtonStyle.secondary,
+                           custom_id="invasion_button",
+                           emoji='🕷')
         async def button_invasion(self, button, interaction):
             self.buttonRes = 'invasion'
             self.disabled_all_button()
@@ -173,9 +188,9 @@ class Announcement(commands.Cog, name="Announcement"):
             await interaction.response.edit_message(view=self)
 
         @discord.ui.button(label="Abbrechen",
-                            style=discord.ButtonStyle.red,
-                            custom_id="cancel_button",
-                            emoji='✖')
+                           style=discord.ButtonStyle.red,
+                           custom_id="cancel_button",
+                           emoji='✖')
         async def button_cancel(self, button, interaction):
             self.buttonRes = 'CANCEL'
             self.disabled_all_button()
@@ -183,11 +198,11 @@ class Announcement(commands.Cog, name="Announcement"):
             self.stop()
 
         @discord.ui.select(placeholder='Wo?',
-                            custom_id='area_select',
-                            min_values=1, 
-                            max_values=1,
-                            options=__areas, 
-                            disabled=True)
+                           custom_id='area_select',
+                           min_values=1,
+                           max_values=1,
+                           options=__areas,
+                           disabled=True)
         async def select_callback(self, select, interaction: discord.Interaction):
             self.slectRes = interaction.data['values'][0]
             select.disabled = True
@@ -198,47 +213,53 @@ class Announcement(commands.Cog, name="Announcement"):
     class TimeView(View):
         """Creates a VIEW sup class with dropdown menu.
         Interactions return certain values"""
-        def __init__(self, ctx, config):
+
+        def __init__(self, ctx: commands.Context, config, log: UserLoggingHandler):
+            self.log = log
             self.ctx = ctx
             self.slectRes = None
             self.buttonRes = None
             self.config = config
-            self.timeout = int(self.config.get('dc_announcement_commands', 'view_timeout_value'))
-            super().__init__(timeout= self.timeout)
+            self.timeout = int(self.config.get(
+                'dc_announcement_commands', 'view_timeout_value'))
+            super().__init__(timeout=self.timeout)
 
         time_options = []
         for i in range(16, 24):
-            time_options.append(discord.SelectOption(label=f'{i}:00', value=f'{i}:00'))
-            time_options.append(discord.SelectOption(label=f'{i}:30', value=f'{i}:30'))
-        
+            time_options.append(discord.SelectOption(
+                label=f'{i}:00', value=f'{i}:00'))
+            time_options.append(discord.SelectOption(
+                label=f'{i}:30', value=f'{i}:30'))
+
         async def on_timeout(self):
             timeoutEmbed = discord.Embed(title='Timeout!',
-                                        description=f'Aus versicherungstechnische Gründe haben Sie nur {self.timeout} Sekunden Zeit mit der Nachricht zu interagieren. Führe denn Befehl erneut aus.',
-                                        color=discord.Color.red())
+                                         description=f'Aus versicherungstechnische Gründe haben Sie nur {self.timeout} Sekunden Zeit mit der Nachricht zu interagieren. Führe denn Befehl erneut aus.',
+                                         color=discord.Color.red())
             await self.ctx.send(embed=timeoutEmbed)
             self.stop()
-        
-        async def on_error(self, error: Exception, item, interaction): # TODO Not tested!
+
+        async def on_error(self, error: Exception, item, interaction):  # TODO Not tested!
             errorEmbed = discord.Embed(title='Something went wrong!',
-                                        description=f'**This command is not available here**\n||{error}||',
-                                        color=discord.Color.red())
+                                       description=f'**This command is not available here**\n||{error}||',
+                                       color=discord.Color.red())
             await interaction.response.send_message(view=errorEmbed)
+            self.log.warning(f'[{self.ctx.author}] Error by annonew command ({error})')
             self.stop()
-        
+
         @discord.ui.button(label="Abbrechen",
-                            style=discord.ButtonStyle.red,
-                            custom_id="cancel_button",
-                            emoji='✖')
+                           style=discord.ButtonStyle.red,
+                           custom_id="cancel_button",
+                           emoji='✖')
         async def button_cancel(self, button, interaction):
             self.buttonRes = 'CANCEL'
             await interaction.response.edit_message(view=self)
             self.stop()
 
         @discord.ui.select(placeholder='Wann? (Uhrzeit)',
-                            custom_id='time_select',
-                            min_values=1, 
-                            max_values=1,
-                            options=time_options)
+                           custom_id='time_select',
+                           min_values=1,
+                           max_values=1,
+                           options=time_options)
         async def select_callback(self, select, interaction: discord.Interaction):
             self.slectRes = interaction.data['values'][0]
             select.disabled = True
@@ -249,93 +270,102 @@ class Announcement(commands.Cog, name="Announcement"):
     class DateView(View):
         """Creates a VIEW sup class with dropdown menu and buttons.
         Interactions return certain values"""
-        def __init__(self, ctx, config):
+
+        def __init__(self, ctx: commands.Context, config, log: UserLoggingHandler):
+            self.log = log
             self.ctx = ctx
             self.slectRes = None
             self.buttonRes = None
             self.config = config
-            self.timeout = int(self.config.get('dc_announcement_commands', 'view_timeout_value'))
-            super().__init__(timeout= self.timeout)
+            self.timeout = int(self.config.get(
+                'dc_announcement_commands', 'view_timeout_value'))
+            super().__init__(timeout=self.timeout)
 
         today = datetime.now()
         time_options = []
         for i in range(5):
             timestr = today + timedelta(days=i)
             timestr = timestr.strftime("%d.%m (%a)")
-            time_options.append(discord.SelectOption(label=timestr, value=timestr))
-        
+            time_options.append(discord.SelectOption(
+                label=timestr, value=timestr))
+
         async def on_timeout(self):
             timeoutEmbed = discord.Embed(title='Timeout!',
-                                        description=f'Aus versicherungstechnische Gründe haben Sie nur {self.timeout} Sekunden Zeit mit der Nachricht zu interagieren. Führe denn Befehl erneut aus.',
-                                        color=discord.Color.red())
+                                         description=f'Aus versicherungstechnische Gründe haben Sie nur {self.timeout} Sekunden Zeit mit der Nachricht zu interagieren. Führe denn Befehl erneut aus.',
+                                         color=discord.Color.red())
             await self.ctx.send(embed=timeoutEmbed)
             self.stop()
-        
-        async def on_error(self, error: Exception, item, interaction): # TODO Not tested!
+
+        async def on_error(self, error: Exception, item, interaction):  # TODO Not tested!
             errorEmbed = discord.Embed(title='Something went wrong!',
-                                        description=f'**This command is not available here**\n||{error}||',
-                                        color=discord.Color.red())
+                                       description=f'**This command is not available here**\n||{error}||',
+                                       color=discord.Color.red())
             await interaction.response.send_message(view=errorEmbed)
+            self.log.warning(f'[{self.ctx.author}] Error by annonew command ({error})')
             self.stop()
-        
+
         @discord.ui.button(label="Abbrechen",
-                            style=discord.ButtonStyle.red,
-                            custom_id="cancel_button",
-                            emoji='✖')
+                           style=discord.ButtonStyle.red,
+                           custom_id="cancel_button",
+                           emoji='✖')
         async def button_cancel(self, button, interaction):
             self.buttonRes = 'CANCEL'
             await interaction.response.edit_message(view=self)
             self.stop()
 
         @discord.ui.select(placeholder='Wann? (Datum)',
-                            custom_id='time_select',
-                            min_values=1, 
-                            max_values=1,
-                            options=time_options)
+                           custom_id='time_select',
+                           min_values=1,
+                           max_values=1,
+                           options=time_options)
         async def select_callback(self, select, interaction: discord.Interaction):
             self.slectRes = interaction.data['values'][0]
             select.disabled = True
             select.placeholder = self.slectRes
             await interaction.response.edit_message(view=self)
             self.stop()
-    
+
     class AnnouncementView(View):
         """Creates a VIEW sup class with dropdown menu and buttons.
         Interactions return certain values"""
-        def __init__(self, ctx, config):
+
+        def __init__(self, ctx: commands.Context, config, log: UserLoggingHandler):
+            self.log = log
             self.ctx = ctx
             self.buttonRes = None
             self.config = config
-            self.timeout = int(self.config.get('dc_announcement_commands', 'view_timeout_value'))
-            super().__init__(timeout= self.timeout)
+            self.timeout = int(self.config.get(
+                'dc_announcement_commands', 'view_timeout_value'))
+            super().__init__(timeout=self.timeout)
 
         async def on_timeout(self):
             timeoutEmbed = discord.Embed(title='Timeout!',
-                                        description=f'Aus versicherungstechnische Gründe haben Sie nur {self.timeout} Sekunden Zeit mit der Nachricht zu interagieren. Führe denn Befehl erneut aus.',
-                                        color=discord.Color.red())
+                                         description=f'Aus versicherungstechnische Gründe haben Sie nur {self.timeout} Sekunden Zeit mit der Nachricht zu interagieren. Führe denn Befehl erneut aus.',
+                                         color=discord.Color.red())
             await self.ctx.send(embed=timeoutEmbed)
             self.stop()
-        
-        async def on_error(self, error: Exception, item, interaction): # TODO Not tested!
+
+        async def on_error(self, error: Exception, item, interaction):  # TODO Not tested!
             errorEmbed = discord.Embed(title='Something went wrong!',
-                                        description=f'**This command is not available here**\n||{error}||',
-                                        color=discord.Color.red())
+                                       description=f'**This command is not available here**\n||{error}||',
+                                       color=discord.Color.red())
             await interaction.response.send_message(view=errorEmbed)
+            self.log.warning(f'[{self.ctx.author}] Error by annonew command ({error})')
             self.stop()
-        
+
         @discord.ui.button(label="Absenden",
-                            style=discord.ButtonStyle.green,
-                            custom_id="send_button",
-                            emoji='💌')
+                           style=discord.ButtonStyle.green,
+                           custom_id="send_button",
+                           emoji='💌')
         async def button_send(self, button, interaction):
             self.buttonRes = 'SEND'
             await interaction.response.edit_message(view=self)
             self.stop()
-        
+
         @discord.ui.button(label="Abbrechen",
-                            style=discord.ButtonStyle.red,
-                            custom_id="cancel_button",
-                            emoji='✖')
+                           style=discord.ButtonStyle.red,
+                           custom_id="cancel_button",
+                           emoji='✖')
         async def button_cancel(self, button, interaction):
             self.buttonRes = 'CANCEL'
             await interaction.response.edit_message(view=self)
@@ -346,17 +376,19 @@ class Announcement(commands.Cog, name="Announcement"):
         """Creates a sequence whereby an announcement 
         is sent to a target channel at the end."""
         # command sequence
+        self.log.info(f'[{ctx.author}] called command annonew')
         try:
             for i in ctx.author.roles:
                 if i.id == int(self.config['role']['bot_commander']):
                     # all variable are loaded
                     enemy = ''
                     annoNewEmbed = self.anno_new_embed()
-                    announcementChannelId = int(self.config.get('dc_channels', 'announcement_id'))
+                    announcementChannelId = int(
+                        self.config.get('dc_channels', 'announcement_id'))
                     serverId = int(self.config.get('dc_server', 'id'))
-                    view1 = self.AnnonewView(ctx, self.config)
-                    view2 = self.DateView(ctx, self.config)
-                    view3 = self.TimeView(ctx, self.config)
+                    view1 = self.AnnonewView(ctx, self.config, self.log)
+                    view2 = self.DateView(ctx, self.config, self.log)
+                    view3 = self.TimeView(ctx, self.config, self.log)
                     # ---------- view1 ----------
                     # AnnonewView and annoNewEmbed is sent to the channel.
                     # the bot waits for an interaction or a time-out.
@@ -366,9 +398,10 @@ class Announcement(commands.Cog, name="Announcement"):
                         if view1.buttonRes == 'CANCEL':
                             await ctx.message.delete()
                         await msg.delete()
+                        self.log.info(f'[{ctx.author}] command annonew was terminated')
                         return
                     # ---------- view1.5 ----------
-                    # if no argument value is given no_argument_embed 
+                    # if no argument value is given no_argument_embed
                     # is sent and the command is aborted
                     if view1.buttonRes == 'war_defense' or view1.buttonRes == 'war_agression':
                         try:
@@ -377,7 +410,7 @@ class Announcement(commands.Cog, name="Announcement"):
                             noArgumentEmbed = self.no_argument_embed()
                             await ctx.send(embed=noArgumentEmbed)
                             await msg.delete()
-                            return 
+                            return
                     # ---------- view2 ----------
                     # DateView is sent to the channel.
                     # the bot waits for an interaction or a time-out.
@@ -387,6 +420,7 @@ class Announcement(commands.Cog, name="Announcement"):
                         if view2.buttonRes == 'CANCEL':
                             await ctx.message.delete()
                         await msg.delete()
+                        self.log.info(f'[{ctx.author}] command annonew was terminated')
                         return
                     # ---------- view3 ----------
                     # TimeView is sent to the channel.
@@ -397,34 +431,42 @@ class Announcement(commands.Cog, name="Announcement"):
                         if view3.buttonRes == 'CANCEL':
                             await ctx.message.delete()
                         await msg.delete()
+                        self.log.info(f'[{ctx.author}] command annonew was terminated')
                         return
                     # ---------- view4 ----------
                     # depending on the selection anno_embed_inv or anno_embed_war is loaded
                     # selection is sent to the channel.
                     # the bot waits for an interaction or a time-out.
-                    # if the value SEND comes back from the interaction 
+                    # if the value SEND comes back from the interaction
                     # the generated embed is sent to the target channel
                     if enemy == '':
-                        annoEmbed = self.anno_embed_inv(view1.slectRes, view2.slectRes, view3.slectRes)
+                        annoEmbed = self.anno_embed_inv(
+                            view1.slectRes, view2.slectRes, view3.slectRes)
                     else:
-                        annoEmbed = self.anno_embed_war(view1.buttonRes, view1.slectRes, view2.slectRes, view3.slectRes, enemy)
-                    view4 = self.AnnouncementView(ctx, self.config)
-                    await msg.edit(embed=annoEmbed , view=view4)
+                        annoEmbed = self.anno_embed_war(
+                            view1.buttonRes, view1.slectRes, view2.slectRes, view3.slectRes, enemy)
+                    view4 = self.AnnouncementView(ctx, self.config, self.log)
+                    await msg.edit(embed=annoEmbed, view=view4)
                     await view4.wait()
                     if view4.buttonRes == None or view4.buttonRes == 'CANCEL':
                         if view4.buttonRes == 'CANCEL':
                             await ctx.message.delete()
                         await msg.delete()
+                        self.log.info(f'[{ctx.author}] command annonew was terminated')
                         return
                     if view4.buttonRes == 'SEND':
                         if ctx.guild.id == serverId:
                             await self.bot.get_channel(announcementChannelId).send('@everyone', embed=annoEmbed)
-                        deliveredEmbed = self.delivered_embed(ctx, announcementChannelId)
+                        deliveredEmbed = self.delivered_embed(
+                            ctx, announcementChannelId)
+                        self.log.info(f'[{ctx.author}] delivered announcement to channel {announcementChannelId}')
                         await ctx.send(embed=deliveredEmbed)
                         await msg.delete()
                     del view1, view2, view3, view4, msg, annoNewEmbed, annoEmbed, deliveredEmbed
         except Exception as e:
             await ctx.send(embed=self.error_embed(e))
+            self.log.warning(f'[{ctx.author}] Error by annonew command ({e})')
+
 
 def setup(bot: commands.Bot):
     bot.add_cog(Announcement(bot))

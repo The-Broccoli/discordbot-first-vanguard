@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from pathlib import Path
 
 import discord
+from core.logging_handler import UserLoggingHandler
 from discord.ext import commands
 from discord.ui.view import View
 
@@ -11,6 +12,7 @@ class Taxes(commands.Cog, name="Taxes"):
     """TODO Taxes cog"""
 
     def __init__(self, bot: commands.Bot):
+        self.log = UserLoggingHandler('taxes')
         self.bot = bot
 
         # Load config
@@ -150,6 +152,7 @@ class Taxes(commands.Cog, name="Taxes"):
         presenceTime[0] = presenceTime[0].strftime('%H:%M - (%m/%d/%Y)') # datetime to string
 
         # command sequence
+        self.log.info(f'[{ctx.author}] called command taxes')
         try:
             for i in ctx.author.roles: # passing through the roles of the author
                 if i.id == int(self.config['role']['bot_commander']): # is there the role id that matches bot_commander id ?
@@ -173,10 +176,12 @@ class Taxes(commands.Cog, name="Taxes"):
             # await ctx.message.delete() # TODO Delete message, does this make sense ?
         except Exception as e:
             await ctx.send(embed=self.error_embed(e))
+            self.log.warning(f'[{ctx.author}] Error by annonew command ({e})')
 
     @commands.command()
     async def blacklist(self, ctx: commands.Context):
         # command sequence
+        self.log.info(f'[{ctx.author}] called command blacklist')
         try:
             for i in ctx.author.roles: # passing through the roles of the author
                 if i.id == int(self.config['role']['bot_commander']):
@@ -184,6 +189,7 @@ class Taxes(commands.Cog, name="Taxes"):
                     await ctx.send(embed = self.blacklist_embed(__blacklist))
         except Exception as e:
             await ctx.send(embed=self.error_embed(e))
+            self.log.warning(f'[{ctx.author}] Error by annonew command ({e})')
 
 def setup(bot: commands.Bot):
     bot.add_cog(Taxes(bot))
