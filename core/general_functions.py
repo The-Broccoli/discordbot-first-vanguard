@@ -1,18 +1,18 @@
 import discord
 import discord.ext.commands as commands
 
+
 class GeneralFunctions():
 
     def __init__(self, bot):
         self.bot = bot
-    
 
     def config_str_to_list(self, config_str: str):
         """Converts a string to a list"""
         config_list = config_str.split(',')
         config_list = [int(i) for i in config_list]
         return config_list
-    
+
     def user_authorization(self, ctx: commands.Context, config_str: int):
         """check if the author is authorized"""
         __serverOwner = self.bot.get_user(int(ctx.guild.owner.id))

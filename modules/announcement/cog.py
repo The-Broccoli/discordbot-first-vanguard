@@ -514,5 +514,6 @@ class Announcement(commands.Cog, name="Announcement"):
         else:
             pass
 
+
 def setup(bot: commands.Bot):
     bot.add_cog(Announcement(bot))

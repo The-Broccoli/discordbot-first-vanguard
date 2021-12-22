@@ -40,13 +40,15 @@ class Settings(commands.Cog, name="Settings"):
     async def commander(self, ctx: commands.Context, *args: str):
         """TODO"""
         # command sequence
-        self.log.info(f'[{ctx.author}] called command commander ({ctx.message.content})')
+        self.log.info(
+            f'[{ctx.author}] called command commander ({ctx.message.content})')
         if GeneralFunctions(self.bot).user_authorization(ctx, self.config['role']['bot_commander']):
             try:
                 if args[0] == 'add':
                     if len(args[1]) == 18:
                         __newRole = int(args[1])
-                        __roleList = GeneralFunctions(self.bot).config_str_to_list(self.config['role']['bot_commander'])
+                        __roleList = GeneralFunctions(self.bot).config_str_to_list(
+                            self.config['role']['bot_commander'])
                         __roleList.append(__newRole)
                         __newRoleStr = ','.join(str(i) for i in __roleList)
                         self.config['role']['bot_commander'] = __newRoleStr
@@ -60,7 +62,8 @@ class Settings(commands.Cog, name="Settings"):
                 elif args[0] == 'remove':
                     if len(args[1]) == 18:
                         __removeRole = int(args[1])
-                        __roleList = GeneralFunctions(self.bot).config_str_to_list(self.config['role']['bot_commander'])
+                        __roleList = GeneralFunctions(self.bot).config_str_to_list(
+                            self.config['role']['bot_commander'])
                         __roleList.remove(__removeRole)
                         __newRoleStr = ','.join(str(i) for i in __roleList)
                         self.config['role']['bot_commander'] = __newRoleStr
@@ -72,7 +75,8 @@ class Settings(commands.Cog, name="Settings"):
                         await ctx.send(embed=self.wrong_argument_embed(ctx, args[1]))
                         return
                 elif args[0] == 'list':
-                    __roleList = GeneralFunctions(self.bot).config_str_to_list(self.config['role']['bot_commander'])
+                    __roleList = GeneralFunctions(self.bot).config_str_to_list(
+                        self.config['role']['bot_commander'])
                     __roleListStr = ''
                     for __role in __roleList:
                         __roleListStr += f'<@&{__role}> - ID:||{__role}||\n'
@@ -88,6 +92,7 @@ class Settings(commands.Cog, name="Settings"):
                     f'[{ctx.author}] error by annosetup command ({e})')
         else:
             pass
+
 
 def setup(bot: commands.Bot):
     bot.add_cog(Settings(bot))
