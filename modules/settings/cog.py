@@ -87,7 +87,7 @@ class Settings(commands.Cog, name="Settings"):
                 self.log.warning(
                     f'[{ctx.author}] error by annosetup command ({e})')
         else:
-            print('User is NOT authorized')
+            pass
 
 def setup(bot: commands.Bot):
     bot.add_cog(Settings(bot))

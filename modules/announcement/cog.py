@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 
 import discord
 from core.logging_handler import UserLoggingHandler
+from core.general_functions import GeneralFunctions
 from discord.ext import commands
 from discord.ui.view import View
 
@@ -488,35 +489,30 @@ class Announcement(commands.Cog, name="Announcement"):
         """Sets up the announcement channel."""
         # command sequence
         self.log.info(f'[{ctx.author}] called command annosetup')
-        try:
-            for i in ctx.author.roles:
-                if i.id == int(self.config['role']['bot_commander']):
-                    try:
-                        if args[0] == '-cset':
-                            if len(args[1]) == 18:
-                                # Update the config
-                                self.config['dc_channels']['announcement_id'] = args[1]
-                                # Write changes back to file
-                                with open('config.ini', 'w') as conf:
-                                    self.config.write(conf)
-                                await ctx.send(embed=self.config_saved_embed(ctx, args[1]))
-                                self.log.info(
-                                    f'[{ctx.author}] announcement channel set to {args[1]}')
-                            else:
-                                await ctx.send(embed=self.error_embed(f'invalid argument: {args[1]}'))
-                        else:
-                            await ctx.send(embed=self.error_embed(f'invalid argument: {args[0]}'))
-                    except IndexError as e:
-                        await ctx.send(embed=self.error_embed('no argument specified'))
-                    except Exception as e:
-                        await ctx.send(embed=self.error_embed(e))
-                        self.log.warning(
-                            f'[{ctx.author}] error by annosetup command ({e})')
-        except Exception as e:
-            await ctx.send(embed=self.error_embed(e))
-            self.log.warning(
-                f'[{ctx.author}] error by annosetup command ({e})')
-
+        if GeneralFunctions(self.bot).user_authorization(ctx, self.config['role']['bot_commander']):
+            try:
+                if args[0] == '-cset':
+                    if len(args[1]) == 18:
+                        # Update the config
+                        self.config['dc_channels']['announcement_id'] = args[1]
+                        # Write changes back to file
+                        with open('config.ini', 'w') as conf:
+                            self.config.write(conf)
+                        await ctx.send(embed=self.config_saved_embed(ctx, args[1]))
+                        self.log.info(
+                            f'[{ctx.author}] announcement channel set to {args[1]}')
+                    else:
+                        await ctx.send(embed=self.error_embed(f'invalid argument: {args[1]}'))
+                else:
+                    await ctx.send(embed=self.error_embed(f'invalid argument: {args[0]}'))
+            except IndexError as e:
+                await ctx.send(embed=self.error_embed('no argument specified'))
+            except Exception as e:
+                await ctx.send(embed=self.error_embed(e))
+                self.log.warning(
+                    f'[{ctx.author}] error by annosetup command ({e})')
+        else:
+            pass
 
 def setup(bot: commands.Bot):
     bot.add_cog(Announcement(bot))
