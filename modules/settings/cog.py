@@ -31,7 +31,9 @@ class Settings(commands.Cog, name="Settings"):
                                            description=f'`{argument}` ist kein gültiges oder vollständigest Argument für diesen Befehl!',
                                            color=discord.Color.red())
         wrongArgumentEmbed.add_field(name='Bot-Commander',
-                                     value='`>commander <add/remove> <user>`')
+                                     value='`>commander <add/remove> <role ID>`')
+        wrongArgumentEmbed.add_field(name='Bot-Commander - List',
+                                     value='`>commander list`')
         return wrongArgumentEmbed
 
     @commands.command()
@@ -43,19 +45,39 @@ class Settings(commands.Cog, name="Settings"):
             try:
                 if args[0] == 'add':
                     if len(args[1]) == 18:
-                        newRole = int(args[1])
-                        roleList = GeneralFunctions(self.bot).config_str_to_list(self.config['role']['bot_commander'])
-                        roleList.append(newRole)
-                        newRoleStr = ','.join(str(i) for i in roleList)
-                        self.config['role']['bot_commander'] = newRoleStr
+                        __newRole = int(args[1])
+                        __roleList = GeneralFunctions(self.bot).config_str_to_list(self.config['role']['bot_commander'])
+                        __roleList.append(__newRole)
+                        __newRoleStr = ','.join(str(i) for i in __roleList)
+                        self.config['role']['bot_commander'] = __newRoleStr
                         with open('config.ini', 'w') as configfile:
                             self.config.write(configfile)
-                        await ctx.send(f'{ctx.message.author.mention}\n<@{newRole}> wurde zur Liste hinzugefügt!')
+                        await ctx.send(f'{ctx.message.author.mention}\n<@{__newRole}> wurde zur Liste hinzugefügt!')
+                        return
                     else:
                         await ctx.send(embed=self.wrong_argument_embed(ctx, args[1]))
+                        return
                 elif args[0] == 'remove':
                     if len(args[1]) == 18:
-                        pass
+                        __removeRole = int(args[1])
+                        __roleList = GeneralFunctions(self.bot).config_str_to_list(self.config['role']['bot_commander'])
+                        __roleList.remove(__removeRole)
+                        __newRoleStr = ','.join(str(i) for i in __roleList)
+                        self.config['role']['bot_commander'] = __newRoleStr
+                        with open('config.ini', 'w') as configfile:
+                            self.config.write(configfile)
+                        await ctx.send(f'{ctx.message.author.mention}\n<@{__removeRole}> wurde aus der Liste entfernt!')
+                        return
+                    else:
+                        await ctx.send(embed=self.wrong_argument_embed(ctx, args[1]))
+                        return
+                elif args[0] == 'list':
+                    __roleList = GeneralFunctions(self.bot).config_str_to_list(self.config['role']['bot_commander'])
+                    __roleListStr = ''
+                    for __role in __roleList:
+                        __roleListStr += f'<@&{__role}> - ID:||{__role}||\n'
+                    await ctx.send(f'{ctx.message.author.mention}\n{__roleListStr}')
+                    return
                 else:
                     await ctx.send(embed=self.wrong_argument_embed(ctx, args[0]))
             except IndexError as e:
