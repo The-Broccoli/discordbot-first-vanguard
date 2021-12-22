@@ -94,7 +94,7 @@ class Announcement(commands.Cog, name="Announcement"):
         noArgumentEmbed.add_field(
             name='Beispiele', value='✅ Richtige schreibweiße:\n`>annonew Falling-Moon`\n\n⛔ Falsche Schreibweise:\n`>annonew Falling Moon`')
         return noArgumentEmbed
-    
+
     def config_saved_embed(self, ctx: commands.Context, channelId: str):
         """returns an embed for the config saved announcement message"""
         configSavedEmbed = discord.Embed(title=f'{self.annonewTitle} - Konfiguration gespeichert!',
@@ -158,7 +158,8 @@ class Announcement(commands.Cog, name="Announcement"):
                                        description=f'**This command is not available here**\n||{error}||',
                                        color=discord.Color.red())
             await interaction.response.send_message(view=errorEmbed)
-            self.log.warning(f'[{self.ctx.author}] Error by annonew command ({error})')
+            self.log.warning(
+                f'[{self.ctx.author}] Error by annonew command ({error})')
             self.stop()
 
         @discord.ui.button(label="Angriffskrieg",
@@ -250,7 +251,8 @@ class Announcement(commands.Cog, name="Announcement"):
                                        description=f'**This command is not available here**\n||{error}||',
                                        color=discord.Color.red())
             await interaction.response.send_message(view=errorEmbed)
-            self.log.warning(f'[{self.ctx.author}] Error by annonew command ({error})')
+            self.log.warning(
+                f'[{self.ctx.author}] Error by annonew command ({error})')
             self.stop()
 
         @discord.ui.button(label="Abbrechen",
@@ -308,7 +310,8 @@ class Announcement(commands.Cog, name="Announcement"):
                                        description=f'**This command is not available here**\n||{error}||',
                                        color=discord.Color.red())
             await interaction.response.send_message(view=errorEmbed)
-            self.log.warning(f'[{self.ctx.author}] Error by annonew command ({error})')
+            self.log.warning(
+                f'[{self.ctx.author}] Error by annonew command ({error})')
             self.stop()
 
         @discord.ui.button(label="Abbrechen",
@@ -357,7 +360,8 @@ class Announcement(commands.Cog, name="Announcement"):
                                        description=f'**This command is not available here**\n||{error}||',
                                        color=discord.Color.red())
             await interaction.response.send_message(view=errorEmbed)
-            self.log.warning(f'[{self.ctx.author}] Error by annonew command ({error})')
+            self.log.warning(
+                f'[{self.ctx.author}] Error by annonew command ({error})')
             self.stop()
 
         @discord.ui.button(label="Absenden",
@@ -405,7 +409,8 @@ class Announcement(commands.Cog, name="Announcement"):
                         if view1.buttonRes == 'CANCEL':
                             await ctx.message.delete()
                         await msg.delete()
-                        self.log.info(f'[{ctx.author}] command annonew was terminated')
+                        self.log.info(
+                            f'[{ctx.author}] command annonew was terminated')
                         return
                     # ---------- view1.5 ----------
                     # if no argument value is given no_argument_embed
@@ -427,7 +432,8 @@ class Announcement(commands.Cog, name="Announcement"):
                         if view2.buttonRes == 'CANCEL':
                             await ctx.message.delete()
                         await msg.delete()
-                        self.log.info(f'[{ctx.author}] command annonew was terminated')
+                        self.log.info(
+                            f'[{ctx.author}] command annonew was terminated')
                         return
                     # ---------- view3 ----------
                     # TimeView is sent to the channel.
@@ -438,7 +444,8 @@ class Announcement(commands.Cog, name="Announcement"):
                         if view3.buttonRes == 'CANCEL':
                             await ctx.message.delete()
                         await msg.delete()
-                        self.log.info(f'[{ctx.author}] command annonew was terminated')
+                        self.log.info(
+                            f'[{ctx.author}] command annonew was terminated')
                         return
                     # ---------- view4 ----------
                     # depending on the selection anno_embed_inv or anno_embed_war is loaded
@@ -459,14 +466,16 @@ class Announcement(commands.Cog, name="Announcement"):
                         if view4.buttonRes == 'CANCEL':
                             await ctx.message.delete()
                         await msg.delete()
-                        self.log.info(f'[{ctx.author}] command annonew was terminated')
+                        self.log.info(
+                            f'[{ctx.author}] command annonew was terminated')
                         return
                     if view4.buttonRes == 'SEND':
                         if ctx.guild.id == serverId:
                             await self.bot.get_channel(announcementChannelId).send('@everyone', embed=annoEmbed)
                         deliveredEmbed = self.delivered_embed(
                             ctx, announcementChannelId)
-                        self.log.info(f'[{ctx.author}] delivered announcement to channel {announcementChannelId}')
+                        self.log.info(
+                            f'[{ctx.author}] delivered announcement to channel {announcementChannelId}')
                         await ctx.send(embed=deliveredEmbed)
                         await msg.delete()
                     del view1, view2, view3, view4, msg, annoNewEmbed, annoEmbed, deliveredEmbed
@@ -487,11 +496,12 @@ class Announcement(commands.Cog, name="Announcement"):
                             if len(args[1]) == 18:
                                 # Update the config
                                 self.config['dc_channels']['announcement_id'] = args[1]
-                                #Write changes back to file
+                                # Write changes back to file
                                 with open('config.ini', 'w') as conf:
                                     self.config.write(conf)
                                 await ctx.send(embed=self.config_saved_embed(ctx, args[1]))
-                                self.log.info(f'[{ctx.author}] announcement channel set to {args[1]}')
+                                self.log.info(
+                                    f'[{ctx.author}] announcement channel set to {args[1]}')
                             else:
                                 await ctx.send(embed=self.error_embed(f'invalid argument: {args[1]}'))
                         else:
@@ -500,17 +510,12 @@ class Announcement(commands.Cog, name="Announcement"):
                         await ctx.send(embed=self.error_embed('no argument specified'))
                     except Exception as e:
                         await ctx.send(embed=self.error_embed(e))
-                        self.log.warning(f'[{ctx.author}] error by annosetup command ({e})')
+                        self.log.warning(
+                            f'[{ctx.author}] error by annosetup command ({e})')
         except Exception as e:
             await ctx.send(embed=self.error_embed(e))
-            self.log.warning(f'[{ctx.author}] error by annosetup command ({e})')
-
-        # try:
-        #     for i in ctx.author.roles:
-        #         if i.id == int(self.config['role']['bot_commander']):
-        # except Exception as e:
-        #     await ctx.send(embed=self.error_embed(e))
-        #     self.log.warning(f'[{ctx.author}] Error by annonew command ({e})')
+            self.log.warning(
+                f'[{ctx.author}] error by annosetup command ({e})')
 
 
 def setup(bot: commands.Bot):
