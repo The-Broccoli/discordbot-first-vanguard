@@ -13,7 +13,7 @@ class Announcement(commands.Cog, name="Announcement"):
     def __init__(self, bot: commands.Bot):
         self.log = UserLoggingHandler('announcement')
         self.bot = bot
-        self.annonewTitle = 'Neue Ankündigung'
+        self.annonewTitle = 'Ankündigung'
 
         # Load config
         file = 'config.ini'
@@ -27,7 +27,7 @@ class Announcement(commands.Cog, name="Announcement"):
     def error_embed(self, error_message):
         """Returns an error embed for a error message"""
         errorEmbed = discord.Embed(title=f'{self.annonewTitle} - Something went wrong!',
-                                   description=f'**This command is not available here**\n||{error_message}||',
+                                   description=f'**Error**\n||{error_message}||',
                                    color=discord.Color.red())
         return errorEmbed
 
@@ -86,7 +86,7 @@ class Announcement(commands.Cog, name="Announcement"):
                                        color=discord.Color.green())
         return deliveredEmbed
 
-    def no_argument_embed(self):
+    def no_argument_embed_annonew(self):
         """returns an embed for the no argument announcement message"""
         noArgumentEmbed = discord.Embed(title=f'{self.annonewTitle} - Gegner Name fehlt.',
                                         description='Du hast keinen Gegner angegeben. Bitte gib den Gegner an, wenn du "Angriffskrieg" oder "Verteidigungskrieg" auswählst.',
@@ -94,6 +94,13 @@ class Announcement(commands.Cog, name="Announcement"):
         noArgumentEmbed.add_field(
             name='Beispiele', value='✅ Richtige schreibweiße:\n`>annonew Falling-Moon`\n\n⛔ Falsche Schreibweise:\n`>annonew Falling Moon`')
         return noArgumentEmbed
+    
+    def config_saved_embed(self, ctx: commands.Context, channelId: str):
+        """returns an embed for the config saved announcement message"""
+        configSavedEmbed = discord.Embed(title=f'{self.annonewTitle} - Konfiguration gespeichert!',
+                                         description=f'{ctx.message.author.mention} Die Konfiguration wurde gespeichert!\nAnkündigung werden jetzt in <#{channelId}> gepostet',
+                                         color=discord.Color.green())
+        return configSavedEmbed
 
     class AnnonewView(View):
         """Creates a VIEW sup class with dropdown menu and buttons.
@@ -407,7 +414,7 @@ class Announcement(commands.Cog, name="Announcement"):
                         try:
                             enemy = args[0].replace('_', ' ')
                         except:
-                            noArgumentEmbed = self.no_argument_embed()
+                            noArgumentEmbed = self.no_argument_embed_annonew()
                             await ctx.send(embed=noArgumentEmbed)
                             await msg.delete()
                             return
@@ -466,6 +473,44 @@ class Announcement(commands.Cog, name="Announcement"):
         except Exception as e:
             await ctx.send(embed=self.error_embed(e))
             self.log.warning(f'[{ctx.author}] Error by annonew command ({e})')
+
+    @commands.command()
+    async def annosetup(self, ctx: commands.Context, *args: str):
+        """Sets up the announcement channel."""
+        # command sequence
+        self.log.info(f'[{ctx.author}] called command annosetup')
+        try:
+            for i in ctx.author.roles:
+                if i.id == int(self.config['role']['bot_commander']):
+                    try:
+                        if args[0] == '-cset':
+                            if len(args[1]) == 18:
+                                # Update the config
+                                self.config['dc_channels']['announcement_id'] = args[1]
+                                #Write changes back to file
+                                with open('config.ini', 'w') as conf:
+                                    self.config.write(conf)
+                                await ctx.send(embed=self.config_saved_embed(ctx, args[1]))
+                                self.log.info(f'[{ctx.author}] announcement channel set to {args[1]}')
+                            else:
+                                await ctx.send(embed=self.error_embed(f'invalid argument: {args[1]}'))
+                        else:
+                            await ctx.send(embed=self.error_embed(f'invalid argument: {args[0]}'))
+                    except IndexError as e:
+                        await ctx.send(embed=self.error_embed('no argument specified'))
+                    except Exception as e:
+                        await ctx.send(embed=self.error_embed(e))
+                        self.log.warning(f'[{ctx.author}] error by annosetup command ({e})')
+        except Exception as e:
+            await ctx.send(embed=self.error_embed(e))
+            self.log.warning(f'[{ctx.author}] error by annosetup command ({e})')
+
+        # try:
+        #     for i in ctx.author.roles:
+        #         if i.id == int(self.config['role']['bot_commander']):
+        # except Exception as e:
+        #     await ctx.send(embed=self.error_embed(e))
+        #     self.log.warning(f'[{ctx.author}] Error by annonew command ({e})')
 
 
 def setup(bot: commands.Bot):
