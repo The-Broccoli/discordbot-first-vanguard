@@ -91,7 +91,7 @@ class AnnouncementMessages():
         embed = self.add_footer(embed)
         return embed
 
-    def announcement_delivered(self, ctx: commands.Context, channelId, commandTitle):
+    def delivered(self, ctx: commands.Context, channelId, commandTitle):
         """returns an embed for the delivered announcement message"""
         embed = discord.Embed(title=f'{commandTitle} - Ankündigung wurde veröffentlicht!',
                               description=f'{ctx.message.author.mention} deine Ankündigung '
