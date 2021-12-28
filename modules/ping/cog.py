@@ -12,7 +12,7 @@ class Ping(commands.Cog, name="Ping"):
 
     def __init__(self, bot: commands.Bot):
         self.log = UserLoggingHandler('ping')
-        self.g_embed = GenerelMessages()
+        self.g_embed = GenerelMessages(bot)
         self.bot = bot
         self.pingTitele = 'Ping'
 
