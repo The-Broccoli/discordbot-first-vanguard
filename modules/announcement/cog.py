@@ -347,8 +347,7 @@ class Announcement(commands.Cog, name="Announcement"):
                         try:
                             enemy = args[0].replace('_', ' ')
                         except:
-                            noArgumentEmbed = self.a_embed.announcement_wrong_argument(
-                                self.annonewTitle)
+                            noArgumentEmbed = self.g_embed.wrong_argument(ctx, '', self.annonewTitle)
                             await ctx.send(embed=noArgumentEmbed)
                             await msg.delete()
                             return

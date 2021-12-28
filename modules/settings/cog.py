@@ -1,6 +1,7 @@
 from configparser import ConfigParser
 
 import discord
+from messages.generel import GenerelMessages
 from core.logging_handler import UserLoggingHandler
 from core.general_functions import GeneralFunctions
 from discord.ext import commands
@@ -11,30 +12,15 @@ class Settings(commands.Cog, name="Settings"):
 
     def __init__(self, bot: commands.Bot):
         self.log = UserLoggingHandler('settings')
+        self.g_embed = GenerelMessages(bot)
         self.bot = bot
+        self.settingTitle = 'Einstellungen'
 
         # Load config
         file = 'config.ini'
         self.config = ConfigParser()
         self.config.read(file)
         del file
-
-    def error_embed(self, error_message):
-        """Returns an error embed for a error message"""
-        errorEmbed = discord.Embed(title=f'{self.annonewTitle} - Something went wrong!',
-                                   description=f'**Error**\n||{error_message}||',
-                                   color=discord.Color.red())
-        return errorEmbed
-
-    def wrong_argument_embed(self, ctx: commands.Context, argument: str):
-        wrongArgumentEmbed = discord.Embed(title='Falsches Agument',
-                                           description=f'`{argument}` ist kein gültiges oder vollständigest Argument für diesen Befehl!',
-                                           color=discord.Color.red())
-        wrongArgumentEmbed.add_field(name='Bot-Commander',
-                                     value='`>commander <add/remove> <role ID>`')
-        wrongArgumentEmbed.add_field(name='Bot-Commander - List',
-                                     value='`>commander list`')
-        return wrongArgumentEmbed
 
     @commands.command()
     async def commander(self, ctx: commands.Context, *args: str):
@@ -57,7 +43,7 @@ class Settings(commands.Cog, name="Settings"):
                         await ctx.send(f'{ctx.message.author.mention}\n<@{__newRole}> wurde zur Liste hinzugefügt!')
                         return
                     else:
-                        await ctx.send(embed=self.wrong_argument_embed(ctx, args[1]))
+                        await ctx.send(embed=self.g_embed.wrong_argument(ctx, args[1], self.settingTitle))
                         return
                 elif args[0] == 'remove':
                     if len(args[1]) == 18:
@@ -72,7 +58,7 @@ class Settings(commands.Cog, name="Settings"):
                         await ctx.send(f'{ctx.message.author.mention}\n<@{__removeRole}> wurde aus der Liste entfernt!')
                         return
                     else:
-                        await ctx.send(embed=self.wrong_argument_embed(ctx, args[1]))
+                        await ctx.send(embed=self.g_embed.wrong_argument(ctx, args[1], self.settingTitle))
                         return
                 elif args[0] == 'list':
                     __roleList = GeneralFunctions(self.bot).config_str_to_list(
@@ -83,11 +69,11 @@ class Settings(commands.Cog, name="Settings"):
                     await ctx.send(f'{ctx.message.author.mention}\n{__roleListStr}')
                     return
                 else:
-                    await ctx.send(embed=self.wrong_argument_embed(ctx, args[0]))
+                    await ctx.send(embed=self.g_embed.wrong_argument(ctx, args[0], self.settingTitle))
             except IndexError as e:
-                await ctx.send(embed=self.wrong_argument_embed(ctx, ctx.message.content[11:]))
+                await ctx.send(embed=self.g_embed.wrong_argument(ctx, ctx.message.content[11:], self.settingTitle))
             except Exception as e:
-                await ctx.send(embed=self.error_embed(e))
+                await ctx.send(embed=self.g_embed.error(self.settingTitle, e))
                 self.log.warning(
                     f'[{ctx.author}] error by annosetup command ({e})')
         else:
