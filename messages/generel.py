@@ -1,5 +1,4 @@
 import discord
-from discord import embeds
 from discord.ext import commands
 
 
@@ -35,7 +34,16 @@ class GenerelMessages():
                                   description=f'`{argument}` ist kein gültiges oder vollständigest Argument für diesen Befehl!',
                                   color=discord.Color.red())
             embed.add_field(name='Bot-Commander',
-                            value='`>commander <add/remove> <role ID>`')
+                            value='`>commander <add/remove> <role ID>`',
+                            inline=True)
             embed.add_field(name='Bot-Commander - List',
-                            value='`>commander list`')
+                            value='`>commander list`',
+                            inline=False)
+            embed.add_field(name='Member Ping',
+                            value='`>memberping <add/remove> <role ID>`',
+                            inline=True)
+            embed.add_field(name='Member Ping - List',
+                            value='`>memberping list`',
+                            inline=False)
+
         return embed

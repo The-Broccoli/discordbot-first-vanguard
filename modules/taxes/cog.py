@@ -1,4 +1,3 @@
-from configparser import ConfigParser
 from datetime import datetime, timedelta
 from pathlib import Path
 
@@ -20,12 +19,6 @@ class Taxes(commands.Cog, name="Taxes"):
         self.g_embed = GenerelMessages(bot)
         self.bot = bot
         self.taxesTitele = 'Gildensteuer'
-
-        # Load config
-        file = 'config.ini'
-        self.config = ConfigParser()
-        self.config.read(file)
-        del file
 
     class TaxView(View):
         def __init__(self, ctx, config):
@@ -128,6 +121,9 @@ class Taxes(commands.Cog, name="Taxes"):
     @commands.command()
     async def taxes(self, ctx: commands.Context):
         """TODO Taxes command"""
+        # Load config
+        self.config = GeneralFunctions(self.bot).load_config()
+
         # blacklist information determine
         blacklist = self.load_blacklist()
 

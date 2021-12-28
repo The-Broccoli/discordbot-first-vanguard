@@ -1,4 +1,3 @@
-from configparser import ConfigParser
 from datetime import datetime, timedelta
 
 import discord
@@ -20,14 +19,11 @@ class Announcement(commands.Cog, name="Announcement"):
         self.bot = bot
         self.annonewTitle = 'Ankündigung'
 
-        # Load config
-        file = 'config.ini'
-        self.config = ConfigParser()
-        self.config.read(file)
-        del file
-
-        self.logoPath = self.config.get('bot_info', 'logo_path')
-        self.botVersion = str(self.config.get('bot_info', 'version'))
+        # # Load config
+        # file = 'config.ini'
+        # self.config = ConfigParser()
+        # self.config.read(file)
+        # del file
 
     class AnnonewView(View):
         """Creates a VIEW sup class with dropdown menu and buttons.
@@ -313,6 +309,8 @@ class Announcement(commands.Cog, name="Announcement"):
     async def annonew(self, ctx: commands.Context, *args: str):
         """Creates a sequence whereby an announcement 
         is sent to a target channel at the end."""
+        # Load config
+        self.config = GeneralFunctions(self.bot).load_config()
         # command sequence
         self.log.info(f'[{ctx.author}] called command annonew')
         if GeneralFunctions(self.bot).user_authorization(ctx, self.config['role']['bot_commander']):
@@ -346,7 +344,8 @@ class Announcement(commands.Cog, name="Announcement"):
                     try:
                         enemy = args[0].replace('_', ' ')
                     except:
-                        noArgumentEmbed = self.g_embed.wrong_argument(ctx, '', self.annonewTitle)
+                        noArgumentEmbed = self.g_embed.wrong_argument(
+                            ctx, '', self.annonewTitle)
                         await ctx.send(embed=noArgumentEmbed)
                         await msg.delete()
                         return
@@ -399,7 +398,8 @@ class Announcement(commands.Cog, name="Announcement"):
                 if view4.buttonRes == 'SEND':
                     if ctx.guild.id == serverId:
                         __memberRollId = self.config.get('role', 'member')
-                        __memberRollId = GeneralFunctions(self.bot).config_str_to_list(__memberRollId)
+                        __memberRollId = GeneralFunctions(
+                            self.bot).config_str_to_list(__memberRollId)
                         __rollstr = ''
                         for m in __memberRollId:
                             __rollstr += f'<@&{str(m)}> '
@@ -414,7 +414,8 @@ class Announcement(commands.Cog, name="Announcement"):
                 del view1, view2, view3, view4, msg, annoNewEmbed, annoEmbed, deliveredEmbed
             except Exception as e:
                 await ctx.send(embed=self.g_embed.error(self.annonewTitle, e))
-                self.log.warning(f'[{ctx.author}] Error by annonew command ({e})')
+                self.log.warning(
+                    f'[{ctx.author}] Error by annonew command ({e})')
         else:
             pass
 

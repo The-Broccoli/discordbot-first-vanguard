@@ -1,5 +1,3 @@
-from configparser import ConfigParser
-
 import discord
 from messages.generel import GenerelMessages
 from core.logging_handler import UserLoggingHandler
@@ -16,15 +14,11 @@ class Ping(commands.Cog, name="Ping"):
         self.bot = bot
         self.pingTitele = 'Ping'
 
-        # Load config
-        file = 'config.ini'
-        self.config = ConfigParser()
-        self.config.read(file)
-        del file
-
     @commands.command()
     async def ping(self, ctx: commands.Context):
         """the bot responds to this command "pong" if the user has the "bot_commander" role"""
+        # Load config
+        self.config = GeneralFunctions(self.bot).load_config()
         # command sequence
         self.log.info(f'[{ctx.author}] called command ping')
         if GeneralFunctions(self.bot).user_authorization(ctx, self.config['role']['bot_commander']):
