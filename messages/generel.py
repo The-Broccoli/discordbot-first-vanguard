@@ -19,15 +19,15 @@ class GenerelMessages():
         """Returns an embed for a wrong argument"""
         # ---------- Ankündigung ----------
         if commandTitle == 'Ankündigung':
-            embed = discord.Embed(title=f'{commandTitle} - Gegner Name fehlt.',
-                                  description='Du hast keinen Gegner angegeben. Bitte gib den '
-                                  'Gegner an, wenn du "Angriffskrieg" oder "Verteidigungskrieg" auswählst.',
+            embed = discord.Embed(title=f'{commandTitle} - Agument fehlt.',
+                                  description='Du hast keinen Gegner bzw. Verbündeten angegeben.'
+                                  'Bitte gib einen Namen an, wenn du **Angriffskrieg**, **Verteidigungskrieg** oder **PVP-Push** auswählst.',
                                   color=discord.Color.red())
             embed.add_field(name='Beispiele',
                             value='✅ Richtige schreibweiße:\n'
-                            '`>annonew Falling-Moon`\n\n'
+                            '`>annonew First-Vanguard`\n\n'
                             '⛔ Falsche Schreibweise:\n'
-                            '`>annonew Falling Moon`')
+                            '`>annonew First Vanguard`')
         # ---------- Einstellungen ----------
         elif commandTitle == 'Einstellungen':
             embed = discord.Embed(title=f'{commandTitle} - Falsches Agument',

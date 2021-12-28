@@ -118,6 +118,17 @@ class Announcement(commands.Cog, name="Announcement"):
             self.enable_select()
             await interaction.response.edit_message(view=self)
 
+        @discord.ui.button(label="PVP-Push",
+                           style=discord.ButtonStyle.secondary,
+                           custom_id="push_button",
+                           emoji='✊')
+        async def button_push(self, button, interaction):
+            self.buttonRes = 'push'
+            self.disabled_all_button()
+            button.style = discord.ButtonStyle.primary
+            self.enable_select()
+            await interaction.response.edit_message(view=self)
+
         @discord.ui.button(label="Abbrechen",
                            style=discord.ButtonStyle.red,
                            custom_id="cancel_button",
@@ -340,7 +351,7 @@ class Announcement(commands.Cog, name="Announcement"):
                 # ---------- view1.5 ----------
                 # if no argument value is given no_argument_embed
                 # is sent and the command is aborted
-                if view1.buttonRes == 'war_defense' or view1.buttonRes == 'war_agression':
+                if view1.buttonRes == 'war_defense' or view1.buttonRes == 'war_agression' or view1.buttonRes == 'push':
                     try:
                         enemy = args[0].replace('_', ' ')
                     except:
@@ -382,9 +393,12 @@ class Announcement(commands.Cog, name="Announcement"):
                 if enemy == '':
                     annoEmbed = self.a_embed.inv(
                         ctx, view1.slectRes, view2.slectRes, view3.slectRes)
-                else:
+                elif view1.buttonRes == 'war_defense' or view1.buttonRes == 'war_agression':
                     annoEmbed = self.a_embed.war(
                         ctx, view1.buttonRes, view1.slectRes, view2.slectRes, view3.slectRes, enemy)
+                else:
+                    annoEmbed = self.a_embed.push(
+                        ctx, view1.slectRes, view2.slectRes, view3.slectRes, enemy)
                 view4 = self.AnnouncementView(ctx, self.config, self.log)
                 await msg.edit(embed=annoEmbed, view=view4)
                 await view4.wait()

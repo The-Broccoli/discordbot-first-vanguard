@@ -67,6 +67,23 @@ class AnnouncementMessages():
         embed = self.add_footer(ctx, embed)
         return embed
 
+    def push(self, ctx: commands.Context, area, day, time, enemy):
+        """Returns an embed for the war announcement message"""
+        __meetingTime = datetime.strptime(time, '%H:%M')
+        __meetingTime = __meetingTime - timedelta(minutes=5)
+        __meetingTime = __meetingTime.strftime('%H:%M')
+        embed = discord.Embed(title=f'✊  Das Syndikat ruft - Wir pushen ein Gebiet!',
+                              description=f'Um **{time}** am **{day}** werden wir gnadenlos denn Einfluss mit '
+                              f'der Kompanie **{enemy}** in **{area}** pushen. Umso mehr helfen, desto schneller sind wir fertig.',
+                              color=discord.Color.purple())
+        embed.add_field(name='ℹ  Zusammenfassung',
+                        value=f' - Wo: `{area}`\n'
+                        f' - Wann (Ingame): `{day}` um `{time}`\n'
+                        f' - Wann (Discord): `{__meetingTime}`\n'
+                        f' - Zusammen mit: `{enemy}`')
+        embed = self.add_footer(ctx, embed)
+        return embed
+
     def inv(self, ctx: commands.Context, area, day, time):
         """Returns an embed for the invasion announcement message"""
         __meetingTime = datetime.strptime(time, '%H:%M')
