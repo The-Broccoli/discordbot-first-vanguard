@@ -315,101 +315,104 @@ class Announcement(commands.Cog, name="Announcement"):
         is sent to a target channel at the end."""
         # command sequence
         self.log.info(f'[{ctx.author}] called command annonew')
-        try:
-            for i in ctx.author.roles:
-                if i.id == int(self.config['role']['bot_commander']):
-                    # all variable are loaded
-                    enemy = ''
-                    annoNewEmbed = self.a_embed.announcement_info_text(
-                        self.annonewTitle)
-                    announcementChannelId = int(
-                        self.config.get('dc_channels', 'announcement_id'))
-                    serverId = int(self.config.get('dc_server', 'id'))
-                    view1 = self.AnnonewView(ctx, self.config, self.log)
-                    view2 = self.DateView(ctx, self.config, self.log)
-                    view3 = self.TimeView(ctx, self.config, self.log)
-                    # ---------- view1 ----------
-                    # AnnonewView and annoNewEmbed is sent to the channel.
-                    # the bot waits for an interaction or a time-out.
-                    msg = await ctx.send(embed=annoNewEmbed, view=view1)
-                    await view1.wait()
-                    if view1.buttonRes == None or view1.slectRes == None or view1.buttonRes == 'CANCEL':
-                        if view1.buttonRes == 'CANCEL':
-                            await ctx.message.delete()
-                        await msg.delete()
-                        self.log.info(
-                            f'[{ctx.author}] command annonew was terminated')
-                        return
-                    # ---------- view1.5 ----------
-                    # if no argument value is given no_argument_embed
-                    # is sent and the command is aborted
-                    if view1.buttonRes == 'war_defense' or view1.buttonRes == 'war_agression':
-                        try:
-                            enemy = args[0].replace('_', ' ')
-                        except:
-                            noArgumentEmbed = self.g_embed.wrong_argument(ctx, '', self.annonewTitle)
-                            await ctx.send(embed=noArgumentEmbed)
+        if GeneralFunctions(self.bot).user_authorization(ctx, self.config['role']['bot_commander']):
+            try:
+                for i in ctx.author.roles:
+                    if i.id == int(self.config['role']['bot_commander']):
+                        # all variable are loaded
+                        enemy = ''
+                        annoNewEmbed = self.a_embed.info_text(
+                            self.annonewTitle)
+                        announcementChannelId = int(
+                            self.config.get('dc_channels', 'announcement_id'))
+                        serverId = int(self.config.get('dc_server', 'id'))
+                        view1 = self.AnnonewView(ctx, self.config, self.log)
+                        view2 = self.DateView(ctx, self.config, self.log)
+                        view3 = self.TimeView(ctx, self.config, self.log)
+                        # ---------- view1 ----------
+                        # AnnonewView and annoNewEmbed is sent to the channel.
+                        # the bot waits for an interaction or a time-out.
+                        msg = await ctx.send(embed=annoNewEmbed, view=view1)
+                        await view1.wait()
+                        if view1.buttonRes == None or view1.slectRes == None or view1.buttonRes == 'CANCEL':
+                            if view1.buttonRes == 'CANCEL':
+                                await ctx.message.delete()
                             await msg.delete()
+                            self.log.info(
+                                f'[{ctx.author}] command annonew was terminated')
                             return
-                    # ---------- view2 ----------
-                    # DateView is sent to the channel.
-                    # the bot waits for an interaction or a time-out.
-                    await msg.edit(view=view2)
-                    await view2.wait()
-                    if view2.slectRes == None or view2.buttonRes == 'CANCEL':
-                        if view2.buttonRes == 'CANCEL':
-                            await ctx.message.delete()
-                        await msg.delete()
-                        self.log.info(
-                            f'[{ctx.author}] command annonew was terminated')
-                        return
-                    # ---------- view3 ----------
-                    # TimeView is sent to the channel.
-                    # the bot waits for an interaction or a time-out.
-                    await msg.edit(view=view3)
-                    await view3.wait()
-                    if view3.slectRes == None or view3.buttonRes == 'CANCEL':
-                        if view3.buttonRes == 'CANCEL':
-                            await ctx.message.delete()
-                        await msg.delete()
-                        self.log.info(
-                            f'[{ctx.author}] command annonew was terminated')
-                        return
-                    # ---------- view4 ----------
-                    # depending on the selection anno_embed_inv or anno_embed_war is loaded
-                    # selection is sent to the channel.
-                    # the bot waits for an interaction or a time-out.
-                    # if the value SEND comes back from the interaction
-                    # the generated embed is sent to the target channel
-                    if enemy == '':
-                        annoEmbed = self.a_embed.announcement_inv(
-                            view1.slectRes, view2.slectRes, view3.slectRes)
-                    else:
-                        annoEmbed = self.a_embed.announcement_war(
-                            view1.buttonRes, view1.slectRes, view2.slectRes, view3.slectRes, enemy)
-                    view4 = self.AnnouncementView(ctx, self.config, self.log)
-                    await msg.edit(embed=annoEmbed, view=view4)
-                    await view4.wait()
-                    if view4.buttonRes == None or view4.buttonRes == 'CANCEL':
-                        if view4.buttonRes == 'CANCEL':
-                            await ctx.message.delete()
-                        await msg.delete()
-                        self.log.info(
-                            f'[{ctx.author}] command annonew was terminated')
-                        return
-                    if view4.buttonRes == 'SEND':
-                        if ctx.guild.id == serverId:
-                            await self.bot.get_channel(announcementChannelId).send('@everyone', embed=annoEmbed)
-                        deliveredEmbed = self.a_embed.announcement_delivered(
-                            ctx, announcementChannelId, self.annonewTitle)
-                        self.log.info(
-                            f'[{ctx.author}] delivered announcement to channel {announcementChannelId}')
-                        await ctx.send(embed=deliveredEmbed)
-                        await msg.delete()
-                    del view1, view2, view3, view4, msg, annoNewEmbed, annoEmbed, deliveredEmbed
-        except Exception as e:
-            await ctx.send(embed=self.g_embed.error(self.annonewTitle, e))
-            self.log.warning(f'[{ctx.author}] Error by annonew command ({e})')
+                        # ---------- view1.5 ----------
+                        # if no argument value is given no_argument_embed
+                        # is sent and the command is aborted
+                        if view1.buttonRes == 'war_defense' or view1.buttonRes == 'war_agression':
+                            try:
+                                enemy = args[0].replace('_', ' ')
+                            except:
+                                noArgumentEmbed = self.g_embed.wrong_argument(ctx, '', self.annonewTitle)
+                                await ctx.send(embed=noArgumentEmbed)
+                                await msg.delete()
+                                return
+                        # ---------- view2 ----------
+                        # DateView is sent to the channel.
+                        # the bot waits for an interaction or a time-out.
+                        await msg.edit(view=view2)
+                        await view2.wait()
+                        if view2.slectRes == None or view2.buttonRes == 'CANCEL':
+                            if view2.buttonRes == 'CANCEL':
+                                await ctx.message.delete()
+                            await msg.delete()
+                            self.log.info(
+                                f'[{ctx.author}] command annonew was terminated')
+                            return
+                        # ---------- view3 ----------
+                        # TimeView is sent to the channel.
+                        # the bot waits for an interaction or a time-out.
+                        await msg.edit(view=view3)
+                        await view3.wait()
+                        if view3.slectRes == None or view3.buttonRes == 'CANCEL':
+                            if view3.buttonRes == 'CANCEL':
+                                await ctx.message.delete()
+                            await msg.delete()
+                            self.log.info(
+                                f'[{ctx.author}] command annonew was terminated')
+                            return
+                        # ---------- view4 ----------
+                        # depending on the selection anno_embed_inv or anno_embed_war is loaded
+                        # selection is sent to the channel.
+                        # the bot waits for an interaction or a time-out.
+                        # if the value SEND comes back from the interaction
+                        # the generated embed is sent to the target channel
+                        if enemy == '':
+                            annoEmbed = self.a_embed.inv(
+                                view1.slectRes, view2.slectRes, view3.slectRes)
+                        else:
+                            annoEmbed = self.a_embed.war(
+                                view1.buttonRes, view1.slectRes, view2.slectRes, view3.slectRes, enemy)
+                        view4 = self.AnnouncementView(ctx, self.config, self.log)
+                        await msg.edit(embed=annoEmbed, view=view4)
+                        await view4.wait()
+                        if view4.buttonRes == None or view4.buttonRes == 'CANCEL':
+                            if view4.buttonRes == 'CANCEL':
+                                await ctx.message.delete()
+                            await msg.delete()
+                            self.log.info(
+                                f'[{ctx.author}] command annonew was terminated')
+                            return
+                        if view4.buttonRes == 'SEND':
+                            if ctx.guild.id == serverId:
+                                await self.bot.get_channel(announcementChannelId).send('@everyone', embed=annoEmbed)
+                            deliveredEmbed = self.a_embed.delivered(
+                                ctx, announcementChannelId, self.annonewTitle)
+                            self.log.info(
+                                f'[{ctx.author}] delivered announcement to channel {announcementChannelId}')
+                            await ctx.send(embed=deliveredEmbed)
+                            await msg.delete()
+                        del view1, view2, view3, view4, msg, annoNewEmbed, annoEmbed, deliveredEmbed
+            except Exception as e:
+                await ctx.send(embed=self.g_embed.error(self.annonewTitle, e))
+                self.log.warning(f'[{ctx.author}] Error by annonew command ({e})')
+        else:
+            pass
 
     @commands.command()
     async def annosetup(self, ctx: commands.Context, *args: str):
@@ -425,7 +428,7 @@ class Announcement(commands.Cog, name="Announcement"):
                         # Write changes back to file
                         with open('config.ini', 'w') as conf:
                             self.config.write(conf)
-                        await ctx.send(embed=self.a_embed.announcement_config_saved(ctx, args[1], self.annonewTitle))
+                        await ctx.send(embed=self.a_embed.config_saved(ctx, args[1], self.annonewTitle))
                         self.log.info(
                             f'[{ctx.author}] announcement channel set to {args[1]}')
                     else:

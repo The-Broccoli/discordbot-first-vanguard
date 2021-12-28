@@ -20,7 +20,7 @@ class AnnouncementMessages():
 
     # Announcement messages
 
-    def announcement_info_text(self, commandTitle):
+    def info_text(self, commandTitle):
         """Returns an embed with the info text for the announcement command"""
         embed = discord.Embed(title=f'{commandTitle} - Formular',
                               description='Wähle hintereinander bitte folgende Informationen aus\n\n'
@@ -32,7 +32,7 @@ class AnnouncementMessages():
 
         return embed
 
-    def announcement_war(self, type, area, day, time, enemy):
+    def war(self, type, area, day, time, enemy):
         """Returns an embed for the war announcement message"""
         __meetingTime = datetime.strptime(time, '%H:%M')
         __meetingTime = __meetingTime - timedelta(minutes=30)
@@ -71,7 +71,7 @@ class AnnouncementMessages():
         embed = self.add_footer(embed)
         return embed
 
-    def announcement_inv(self, area, day, time):
+    def inv(self, area, day, time):
         """Returns an embed for the invasion announcement message"""
         __meetingTime = datetime.strptime(time, '%H:%M')
         __meetingTime = __meetingTime - timedelta(minutes=15)
@@ -99,20 +99,7 @@ class AnnouncementMessages():
                               color=discord.Color.purple())
         return embed
 
-    def announcement_wrong_argument(self, commandTitle):
-        """returns an embed for the no argument announcement message"""
-        embed = discord.Embed(title=f'{commandTitle} - Gegner Name fehlt.',
-                              description='Du hast keinen Gegner angegeben. Bitte gib den '
-                              'Gegner an, wenn du "Angriffskrieg" oder "Verteidigungskrieg" auswählst.',
-                              color=discord.Color.red())
-        embed.add_field(name='Beispiele',
-                        value='✅ Richtige schreibweiße:\n'
-                        '`>annonew Falling-Moon`\n\n'
-                        '⛔ Falsche Schreibweise:\n'
-                        '`>annonew Falling Moon`')
-        return embed
-
-    def announcement_config_saved(self, ctx: commands.Context, channelId: str, commandTitle):
+    def config_saved(self, ctx: commands.Context, channelId: str, commandTitle):
         """returns an embed for the config saved announcement message"""
         embed = discord.Embed(title=f'{commandTitle} - Konfiguration gespeichert!',
                               description=f'{ctx.message.author.mention} Die Konfiguration wurde gespeichert!\n'
