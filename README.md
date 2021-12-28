@@ -1,4 +1,4 @@
-# forgotten-hydra
+# discordbot-first-vanguard
  A Discord bot written in Python to help with guild administration.
 
 - External libraries
