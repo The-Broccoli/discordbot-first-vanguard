@@ -3,6 +3,8 @@ from datetime import datetime, timedelta
 from pathlib import Path
 
 import discord
+from messages.texes import TexesMessages
+from messages.generel import GenerelMessages
 from core.logging_handler import UserLoggingHandler
 from core.general_functions import GeneralFunctions
 from discord.ext import commands
@@ -14,7 +16,10 @@ class Taxes(commands.Cog, name="Taxes"):
 
     def __init__(self, bot: commands.Bot):
         self.log = UserLoggingHandler('taxes')
+        self.t_embed = TexesMessages(bot)
+        self.g_embed = GenerelMessages(bot)
         self.bot = bot
+        self.taxesTitele = 'Gildensteuer'
 
         # Load config
         file = 'config.ini'
@@ -96,25 +101,6 @@ class Taxes(commands.Cog, name="Taxes"):
         else:
             return '⚪'  # error
 
-    def error_embed(self, error_message):
-        """Returns an error embed"""
-        errorEmbed = discord.Embed(title='Something went wrong!',
-                                   description=f'**This command is not available here**\n||{error_message}||',
-                                   color=discord.Color.red())
-        return errorEmbed
-
-    def info_embed(self, ctx: commands.Context, intervalValue, unpaidTaxes, paidTaxes, blacklist, presenceTime):
-        infoEmbed = discord.Embed(title='Gildensteuer Benachrichtigung',
-                                  description=f'Hallo {ctx.message.author.mention}, mit diesem Befehl kannst du eine Private Notification **an alle Mitglieder** automatisiert versenden, die noch keine Steuern in dieser KW gezahlt haben (aufgenommen Mitglieder, die diesen Dienst verweigert haben).',
-                                  color=discord.Colour.green())
-        infoEmbed.add_field(name="Ablauf",
-                            value=f'Sobald du auf "Absenden" klickst, werde die Nachrichten in einem Intervall von {intervalValue} Minuten versendet. Zwischen dem Versenden der Nachrichten ist so genügen Zeit, um die Beiträge einzutragen.\n`({unpaidTaxes} (Unbezahlt) - {len(blacklist)} (Blacklist)) * {intervalValue} Minuten = {presenceTime[1]}`\n Anwesenheit gewähren bis **{presenceTime[0]}**',
-                            inline=True)
-        infoEmbed.add_field(name='Tax status',
-                            value=f'Offen: **{unpaidTaxes}**\tBezahlt: **{paidTaxes}**',
-                            inline=True)
-        return infoEmbed
-
     def blacklist_embed(self, blacklist):
         __today = datetime.now()
         __todayStr = __today.strftime('%H:%M - %d.%m.%y')
@@ -161,8 +147,8 @@ class Taxes(commands.Cog, name="Taxes"):
         self.log.info(f'[{ctx.author}] called command taxes')
         if GeneralFunctions(self.bot).user_authorization(ctx, self.config['role']['bot_commander']):
             """With this command you can start the tax notification"""
-            infoEmbed = self.info_embed(
-                ctx, intervalValue, unpaidTaxes, paidTaxes, blacklist, presenceTime)
+            infoEmbed = self.t_embed.info(
+                ctx, intervalValue, unpaidTaxes, paidTaxes, blacklist, presenceTime, self.taxesTitele)
             view = self.TaxView(ctx, self.config)  # create view
             # send embed and view and save message class in msg
             msg = await ctx.send(embed=infoEmbed, view=view)
@@ -180,7 +166,7 @@ class Taxes(commands.Cog, name="Taxes"):
             elif view.res == 'SEND':
                 return
         else:
-            pass
+            await ctx.send(embed=self.g_embed.error(self.taxesTitele, 'Du hast keine Berechtigung für diesen Befehl!'))
 
     @commands.command()
     async def blacklist(self, ctx: commands.Context):
@@ -190,7 +176,7 @@ class Taxes(commands.Cog, name="Taxes"):
             __blacklist = self.load_blacklist()
             await ctx.send(embed=self.blacklist_embed(__blacklist))
         else:
-            pass
+            await ctx.send(embed=self.g_embed.error(self.taxesTitele, 'Du hast keine Berechtigung für diesen Befehl!'))
 
 
 def setup(bot: commands.Bot):
