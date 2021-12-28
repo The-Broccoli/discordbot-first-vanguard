@@ -4,7 +4,7 @@ import discord
 from discord.ext import commands
 
 
-class UserEmbed():
+class AnnouncementMessages():
     """This class creates different messages for the user"""
 
     def __init__(self, bot):
@@ -16,16 +16,6 @@ class UserEmbed():
         """Adds the footer to the embed"""
         embed.set_footer(
             text=f'The Forgotten Team - Forgotten-Hydra Discord Bot {self.botVersion}', icon_url=self.logoPath)
-        return embed
-
-    # General messages
-
-    def error(self, commandTitle, error):
-        """Returns an error embed for a error message"""
-        embed = discord.Embed(title=f'{commandTitle} - Error',
-                              description=f'Hier lauft etwas nicht so wie es sein sollte! :sweat:`\n```{error}```',
-                              color=discord.Color.red())
-
         return embed
 
     # Announcement messages

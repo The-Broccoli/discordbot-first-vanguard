@@ -1,6 +1,7 @@
 from configparser import ConfigParser
 
 import discord
+from messages.generel import GenerelMessages
 from core.logging_handler import UserLoggingHandler
 from core.general_functions import GeneralFunctions
 from discord.ext import commands
@@ -11,20 +12,15 @@ class Ping(commands.Cog, name="Ping"):
 
     def __init__(self, bot: commands.Bot):
         self.log = UserLoggingHandler('ping')
+        self.g_embed = GenerelMessages()
         self.bot = bot
+        self.pingTitele = 'Ping'
 
         # Load config
         file = 'config.ini'
         self.config = ConfigParser()
         self.config.read(file)
         del file
-
-    def error_embed(self, error_message):
-        """Returns an error embed for a error message"""
-        errorEmbed = discord.Embed(title=f'{self.annonewTitle} - Something went wrong!',
-                                   description=f'**Error**\n||{error_message}||',
-                                   color=discord.Color.red())
-        return errorEmbed
 
     @commands.command()
     async def ping(self, ctx: commands.Context):
@@ -34,9 +30,10 @@ class Ping(commands.Cog, name="Ping"):
         if GeneralFunctions(self.bot).user_authorization(ctx, self.config['role']['bot_commander']):
             """Checks for a response from the Bot"""
             try:
+                # ctx.reply()
                 await ctx.send(f'{ctx.message.author.mention}\nPong! {round(self.bot.latency * 1000)}ms')
             except Exception as e:
-                await ctx.send(embed=self.error_embed(e))
+                await ctx.send(embed=self.g_embed(self.pingTitele, e))
                 self.log.warning(f'[{ctx.author}] Error by ping command ({e})')
         else:
             pass

@@ -2,7 +2,8 @@ from configparser import ConfigParser
 from datetime import datetime, timedelta
 
 import discord
-from messages.user_embed import UserEmbed
+from messages.announcement import AnnouncementMessages
+from messages.generel import GenerelMessages
 from core.logging_handler import UserLoggingHandler
 from core.general_functions import GeneralFunctions
 from discord.ext import commands
@@ -14,7 +15,8 @@ class Announcement(commands.Cog, name="Announcement"):
 
     def __init__(self, bot: commands.Bot):
         self.log = UserLoggingHandler('announcement')
-        self.embed = UserEmbed(bot)
+        self.a_embed = AnnouncementMessages(bot)
+        self.g_embed = GenerelMessages(bot)
         self.bot = bot
         self.annonewTitle = 'Ankündigung'
 
@@ -318,7 +320,7 @@ class Announcement(commands.Cog, name="Announcement"):
                 if i.id == int(self.config['role']['bot_commander']):
                     # all variable are loaded
                     enemy = ''
-                    annoNewEmbed = self.embed.announcement_info_text(
+                    annoNewEmbed = self.a_embed.announcement_info_text(
                         self.annonewTitle)
                     announcementChannelId = int(
                         self.config.get('dc_channels', 'announcement_id'))
@@ -345,7 +347,7 @@ class Announcement(commands.Cog, name="Announcement"):
                         try:
                             enemy = args[0].replace('_', ' ')
                         except:
-                            noArgumentEmbed = self.embed.announcement_wrong_argument(
+                            noArgumentEmbed = self.a_embed.announcement_wrong_argument(
                                 self.annonewTitle)
                             await ctx.send(embed=noArgumentEmbed)
                             await msg.delete()
@@ -381,10 +383,10 @@ class Announcement(commands.Cog, name="Announcement"):
                     # if the value SEND comes back from the interaction
                     # the generated embed is sent to the target channel
                     if enemy == '':
-                        annoEmbed = self.embed.announcement_inv(
+                        annoEmbed = self.a_embed.announcement_inv(
                             view1.slectRes, view2.slectRes, view3.slectRes)
                     else:
-                        annoEmbed = self.embed.announcement_war(
+                        annoEmbed = self.a_embed.announcement_war(
                             view1.buttonRes, view1.slectRes, view2.slectRes, view3.slectRes, enemy)
                     view4 = self.AnnouncementView(ctx, self.config, self.log)
                     await msg.edit(embed=annoEmbed, view=view4)
@@ -399,7 +401,7 @@ class Announcement(commands.Cog, name="Announcement"):
                     if view4.buttonRes == 'SEND':
                         if ctx.guild.id == serverId:
                             await self.bot.get_channel(announcementChannelId).send('@everyone', embed=annoEmbed)
-                        deliveredEmbed = self.embed.announcement_delivered(
+                        deliveredEmbed = self.a_embed.announcement_delivered(
                             ctx, announcementChannelId, self.annonewTitle)
                         self.log.info(
                             f'[{ctx.author}] delivered announcement to channel {announcementChannelId}')
@@ -407,7 +409,7 @@ class Announcement(commands.Cog, name="Announcement"):
                         await msg.delete()
                     del view1, view2, view3, view4, msg, annoNewEmbed, annoEmbed, deliveredEmbed
         except Exception as e:
-            await ctx.send(embed=self.embed.error(self.annonewTitle, e))
+            await ctx.send(embed=self.g_embed.error(self.annonewTitle, e))
             self.log.warning(f'[{ctx.author}] Error by annonew command ({e})')
 
     @commands.command()
@@ -424,17 +426,17 @@ class Announcement(commands.Cog, name="Announcement"):
                         # Write changes back to file
                         with open('config.ini', 'w') as conf:
                             self.config.write(conf)
-                        await ctx.send(embed=self.embed.announcement_config_saved(ctx, args[1], self.annonewTitle))
+                        await ctx.send(embed=self.a_embed.announcement_config_saved(ctx, args[1], self.annonewTitle))
                         self.log.info(
                             f'[{ctx.author}] announcement channel set to {args[1]}')
                     else:
-                        await ctx.send(embed=self.embed.error(self.annonewTitle, f'invalid argument: {args[1]}'))
+                        await ctx.send(embed=self.g_embed.error(self.annonewTitle, f'invalid argument: {args[1]}'))
                 else:
-                    await ctx.send(embed=self.embed.error(self.annonewTitle, f'invalid argument: {args[0]}'))
+                    await ctx.send(embed=self.g_embed.error(self.annonewTitle, f'invalid argument: {args[0]}'))
             except IndexError as e:
-                await ctx.send(embed=self.embed.error(self.annonewTitle, 'no argument specified'))
+                await ctx.send(embed=self.g_embed.error(self.annonewTitle, 'no argument specified'))
             except Exception as e:
-                await ctx.send(embed=self.embed.error(self.annonewTitle, e))
+                await ctx.send(embed=self.g_embed.error(self.annonewTitle, e))
                 self.log.warning(
                     f'[{ctx.author}] error by annosetup command ({e})')
         else:
