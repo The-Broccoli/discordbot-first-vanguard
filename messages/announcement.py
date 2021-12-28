@@ -24,7 +24,7 @@ class AnnouncementMessages():
         """Returns an embed with the info text for the announcement command"""
         embed = discord.Embed(title=f'{commandTitle} - Formular',
                               description='Wähle hintereinander bitte folgende Informationen aus\n\n'
-                              '- Art des Events: `Angriffskrieg, Verteidigungskrieg, Invasion`\n'
+                              '- Art des Events: `Angriffskrieg, Verteidigungskrieg, ...`\n'
                               '- In welchem Gebiet: `Everfall, Windsward, Mourningdale, ...`\n'
                               '- An welchen Tag: `Tue, Wed, Thu, Fri ...`\n'
                               '- Um wie viel Uhr: `17:30, 18:00, 18:30, 19:00, ...`',
