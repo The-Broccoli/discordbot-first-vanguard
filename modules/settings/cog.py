@@ -40,7 +40,7 @@ class Settings(commands.Cog, name="Settings"):
                         self.config['role']['bot_commander'] = __newRoleStr
                         with open('config.ini', 'w') as configfile:
                             self.config.write(configfile)
-                        await ctx.send(f'{ctx.message.author.mention}\n<@{__newRole}> wurde zur Liste hinzugefügt!')
+                        await ctx.send(f'{ctx.message.author.mention}\n<@&{__newRole}> wurde zur Liste hinzugefügt!')
                         return
                     else:
                         await ctx.send(embed=self.g_embed.wrong_argument(ctx, args[1], self.settingTitle))
@@ -55,7 +55,7 @@ class Settings(commands.Cog, name="Settings"):
                         self.config['role']['bot_commander'] = __newRoleStr
                         with open('config.ini', 'w') as configfile:
                             self.config.write(configfile)
-                        await ctx.send(f'{ctx.message.author.mention}\n<<@&{__removeRole}> wurde aus der Liste entfernt!')
+                        await ctx.send(f'{ctx.message.author.mention}\n<@&{__removeRole}> wurde aus der Liste entfernt!')
                         return
                     else:
                         await ctx.send(embed=self.g_embed.wrong_argument(ctx, args[1], self.settingTitle))

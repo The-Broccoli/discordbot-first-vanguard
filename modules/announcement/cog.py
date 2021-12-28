@@ -398,7 +398,13 @@ class Announcement(commands.Cog, name="Announcement"):
                     return
                 if view4.buttonRes == 'SEND':
                     if ctx.guild.id == serverId:
-                        await self.bot.get_channel(announcementChannelId).send('@everyone', embed=annoEmbed)
+                        __memberRollId = self.config.get('role', 'member')
+                        __memberRollId = GeneralFunctions(self.bot).config_str_to_list(__memberRollId)
+                        __rollstr = ''
+                        for m in __memberRollId:
+                            __rollstr += f'<@&{str(m)}> '
+                        await self.bot.get_channel(announcementChannelId).send(f'{__rollstr}', embed=annoEmbed)
+                        del __memberRollId, __rollstr
                     deliveredEmbed = self.a_embed.delivered(
                         ctx, announcementChannelId, self.annonewTitle)
                     self.log.info(
