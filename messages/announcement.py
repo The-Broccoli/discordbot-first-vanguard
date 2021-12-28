@@ -49,10 +49,6 @@ class AnnouncementMessages():
                 f' - Wann (Ingame): `{day}` um `{time}`\n'
                 f' - Wann (Discord): `{__meetingTime}`\n'
                 f' - Gegen: `{enemy}`')
-            embed.add_field(
-                name='🛠  Denkt bitte an',
-                value=' - [buff food](https://www.google.com/)\n'
-                ' - [war builds](https://www.google.com/)')
         elif type == 'war_defense':
             embed = discord.Embed(title=f'🛡  Das Kriegshorn ruft - Wir werden angegriffen!',
                                   description=f'Am **{day}** um **{time}** müssen wir unser geliebtes **{area}**\n '
@@ -64,10 +60,11 @@ class AnnouncementMessages():
                 value=f' - Wo: `{area}`\n'
                 f' - Wann (Ingame): `{day}` um `{time}`\n'
                 f' - Wann (Discord): `{__meetingTime}`')
-            embed.add_field(
-                name='🛠  Denkt bitte an',
-                value=' - [buff food](https://www.google.com/)\n'
-                ' - [corrupted perks](https://www.google.com/)')
+        embed.add_field(name='🛠  Denkt bitte an',
+                        value=' - [Warbuilds](https://first-vanguard.de/roles)\n'
+                        ' - \n'
+                        ' - [Buff Food](https://nwdb.info/db/items/consumables/food/page/1?tier=5&sort=gs_desc)\n'
+                        ' - Honing Stone\n')
         embed = self.add_footer(ctx, embed)
         return embed
 
@@ -82,12 +79,16 @@ class AnnouncementMessages():
                               f'**{area}**, am War Board (Kriegs Brett) für den Invasions an.',
                               color=discord.Color.purple())
         embed.add_field(name='ℹ  Zusammenfassung',
-                        value=f' - Wo: `{area}`'
-                        f'\n - Wann (Ingame): `{day}` um `{time}`'
-                        f'\n - Wann (Discord): `{__meetingTime}`')
+                        value=f' - Wo: `{area}`\n'
+                        f' - Wann (Ingame): `{day}` um `{time}`\n'
+                        f' - Wann (Discord): `{__meetingTime}`\n')
         embed.add_field(name='🛠  Denkt bitte an',
-                        value='- [buff food](https://www.google.com/)'
-                        '\n- [corrupted perks](https://www.google.com/)')
+                        value=' - Trophy(s)\n'
+                        ' - Corrupted Coatings\n'
+                        ' - Honing Stones\n'
+                        ' - T5 Saphire in Waffen\n'
+                        ' - Corrupted Damage Perk auf Waffen\n')
+
         embed = self.add_footer(ctx, embed)
         return embed
 
