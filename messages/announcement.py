@@ -62,8 +62,7 @@ class AnnouncementMessages():
                 f' - Wann (Discord): `{__meetingTime}`')
         embed.add_field(name='🛠  Denkt bitte an',
                         value=' - [Warbuilds](https://first-vanguard.de/roles)\n'
-                        ' - \n'
-                        ' - [Buff Food](https://nwdb.info/db/items/consumables/food/page/1?tier=5&sort=gs_desc)\n'
+                        ' - Buff Food\n'
                         ' - Honing Stone\n')
         embed = self.add_footer(ctx, embed)
         return embed
