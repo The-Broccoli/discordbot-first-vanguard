@@ -382,10 +382,10 @@ class Announcement(commands.Cog, name="Announcement"):
                 # the generated embed is sent to the target channel
                 if enemy == '':
                     annoEmbed = self.a_embed.inv(
-                        view1.slectRes, view2.slectRes, view3.slectRes)
+                        ctx, view1.slectRes, view2.slectRes, view3.slectRes)
                 else:
                     annoEmbed = self.a_embed.war(
-                        view1.buttonRes, view1.slectRes, view2.slectRes, view3.slectRes, enemy)
+                        ctx, view1.buttonRes, view1.slectRes, view2.slectRes, view3.slectRes, enemy)
                 view4 = self.AnnouncementView(ctx, self.config, self.log)
                 await msg.edit(embed=annoEmbed, view=view4)
                 await view4.wait()

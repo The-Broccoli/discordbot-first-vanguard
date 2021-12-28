@@ -12,10 +12,10 @@ class AnnouncementMessages():
         self.botVersion = '0.1'  # TODO
         self.logoPath = ''  # TODO
 
-    def add_footer(self, embed: discord.Embed):
+    def add_footer(self, ctx: commands.Context, embed: discord.Embed):
         """Adds the footer to the embed"""
         embed.set_footer(
-            text=f'The Forgotten Team - Forgotten-Hydra Discord Bot {self.botVersion}', icon_url=self.logoPath)
+            text=f'{ctx.author.display_name} (First Vanguard Discord Bot {self.botVersion})', icon_url=ctx.author.avatar.url)
         return embed
 
     # Announcement messages
@@ -32,7 +32,7 @@ class AnnouncementMessages():
 
         return embed
 
-    def war(self, type, area, day, time, enemy):
+    def war(self, ctx: commands.Context, type, area, day, time, enemy):
         """Returns an embed for the war announcement message"""
         __meetingTime = datetime.strptime(time, '%H:%M')
         __meetingTime = __meetingTime - timedelta(minutes=30)
@@ -68,10 +68,10 @@ class AnnouncementMessages():
                 name='🛠  Denkt bitte an',
                 value=' - [buff food](https://www.google.com/)\n'
                 ' - [corrupted perks](https://www.google.com/)')
-        embed = self.add_footer(embed)
+        embed = self.add_footer(ctx, embed)
         return embed
 
-    def inv(self, area, day, time):
+    def inv(self, ctx: commands.Context, area, day, time):
         """Returns an embed for the invasion announcement message"""
         __meetingTime = datetime.strptime(time, '%H:%M')
         __meetingTime = __meetingTime - timedelta(minutes=15)
@@ -88,7 +88,7 @@ class AnnouncementMessages():
         embed.add_field(name='🛠  Denkt bitte an',
                         value='- [buff food](https://www.google.com/)'
                         '\n- [corrupted perks](https://www.google.com/)')
-        embed = self.add_footer(embed)
+        embed = self.add_footer(ctx, embed)
         return embed
 
     def delivered(self, ctx: commands.Context, channelId, commandTitle):
