@@ -21,12 +21,13 @@ class Ping(commands.Cog, name="Ping"):
         # command sequence
         self.log.info(f'[{ctx.author}] called command ping')
         if GeneralFunctions(self.bot).user_authorization(ctx, self.config['role']['bot_commander']):
-            """Checks for a response from the Bot"""
+            # Checks for a response from the Bot
             try:
                 # ctx.reply()
                 await ctx.send(f'{ctx.message.author.mention}\nPong! {round(self.bot.latency * 1000)}ms')
             except Exception as e:
-                await ctx.send(embed=self.g_embed(self.pingTitele, e))
+                eembed = self.g_embed(self.pingTitele, e)
+                await ctx.send(embed=eembed)
                 self.log.warning(f'[{ctx.author}] Error by ping command ({e})')
         else:
             pass
