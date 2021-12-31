@@ -1,6 +1,5 @@
 from configparser import ConfigParser
 
-import discord
 import discord.ext.commands as commands
 
 

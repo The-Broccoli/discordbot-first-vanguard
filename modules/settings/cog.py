@@ -1,4 +1,3 @@
-import discord
 from messages.generel import GenerelMessages
 from core.logging_handler import UserLoggingHandler
 from core.general_functions import GeneralFunctions
