@@ -16,7 +16,7 @@ def main():
     del file
 
     intents = discord.Intents.all()
-    client = commands.Bot(command_prefix=">", intents=intents)
+    client = commands.Bot(command_prefix=">", intents=intents, help_command=None)
 
     # Ready message
     @client.event
