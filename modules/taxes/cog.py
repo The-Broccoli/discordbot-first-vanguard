@@ -58,7 +58,7 @@ class Taxes(commands.Cog, name="Taxes"):
         async def on_timeout(self):
             self.res = None
             timeoutEmbed = discord.Embed(title='Timeout!',
-                                         description=f'Aus versicherungstechnische Gründe haben Sie nur {self.timeout} Sekunden Zeit mit der Nachricht zu interagieren. Führe denn Befehl erneut aus.',
+                                         description=f'Aus versicherungstechnischen Gründen haben Sie nur {self.timeout} Sekunden Zeit mit der Nachricht zu interagieren. Führe den Befehl erneut aus.',
                                          color=discord.Color.red())
             await self.ctx.send(embed=timeoutEmbed)
             self.stop()
