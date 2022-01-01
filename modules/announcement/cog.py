@@ -19,12 +19,6 @@ class Announcement(commands.Cog, name="Announcement"):
         self.bot = bot
         self.annonewTitle = 'Ankündigung'
 
-        # # Load config
-        # file = 'config.ini'
-        # self.config = ConfigParser()
-        # self.config.read(file)
-        # del file
-
     class AnnonewView(View):
         """Creates a VIEW sup class with dropdown menu and buttons.
         Interactions return certain values"""
@@ -60,7 +54,7 @@ class Announcement(commands.Cog, name="Announcement"):
         def disabled_all_button(self):
             """Sets all buttons with specific names to disabled"""
             for b in self.children:
-                if b.custom_id == 'war_agression_button' or b.custom_id == 'war_defense_button' or b.custom_id == 'invasion_button' or b.custom_id == 'cancel_button':
+                if b.custom_id == 'war_agression_button' or b.custom_id == 'war_defense_button' or b.custom_id == 'invasion_button' or b.custom_id == 'cancel_button' or b.custom_id == 'push_button':
                     b.disabled = True
 
         def enable_select(self):
@@ -409,7 +403,7 @@ class Announcement(commands.Cog, name="Announcement"):
                     self.log.info(
                         f'[{ctx.author}] command annonew was terminated')
                     return
-                if view4.buttonRes == 'SEND':
+                elif view4.buttonRes == 'SEND':
                     if ctx.guild.id == serverId:
                         __memberRollId = self.config.get('role', 'member')
                         __memberRollId = GeneralFunctions(
