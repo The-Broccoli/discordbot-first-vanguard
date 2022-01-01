@@ -54,7 +54,7 @@ class Announcement(commands.Cog, name="Announcement"):
         def disabled_all_button(self):
             """Sets all buttons with specific names to disabled"""
             for b in self.children:
-                if b.custom_id == 'war_agression_button' or b.custom_id == 'war_defense_button' or b.custom_id == 'invasion_button' or b.custom_id == 'cancel_button' or b.custom_id == 'push_button':
+                if b.custom_id == 'war_agression_button' or b.custom_id == 'war_defense_button' or b.custom_id == 'invasion_button' or b.custom_id == 'push_button':
                     b.disabled = True
 
         def enable_select(self):
