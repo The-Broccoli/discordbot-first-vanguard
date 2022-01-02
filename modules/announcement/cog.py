@@ -430,6 +430,8 @@ class Announcement(commands.Cog, name="Announcement"):
     @commands.command()
     async def annosetup(self, ctx: commands.Context, *args: str):
         """Sets up the announcement channel."""
+        # Load config
+        self.config = GeneralFunctions(self.bot).load_config()
         # command sequence
         self.log.info(f'[{ctx.author}] called command annosetup')
         if GeneralFunctions(self.bot).user_authorization(ctx, self.config['role']['bot_commander']):
