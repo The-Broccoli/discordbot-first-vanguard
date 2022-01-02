@@ -75,6 +75,8 @@ class Settings(commands.Cog, name="Settings"):
     @commands.command()
     async def memberping(self, ctx: commands.Context, *args: str):
         """TODO"""
+        # Load config
+        self.config = GeneralFunctions(self.bot).load_config()
         # command sequence
         self.log.info(
             f'[{ctx.author}] called command memberping ({ctx.message.content})')
