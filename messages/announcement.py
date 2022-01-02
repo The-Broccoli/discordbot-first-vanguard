@@ -15,7 +15,7 @@ class AnnouncementMessages():
     def add_footer(self, ctx: commands.Context, embed: discord.Embed):
         """Adds the footer to the embed"""
         embed.set_footer(
-            text=f'{ctx.author.display_name} (First Vanguard Discord Bot {self.botVersion})', icon_url=ctx.author.avatar.url)
+            text=f'{ctx.author.display_name} – built with: First Vanguard Discord Bot {self.botVersion}', icon_url=ctx.author.avatar.url)
         return embed
 
     # Announcement messages

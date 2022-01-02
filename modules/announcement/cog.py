@@ -35,7 +35,7 @@ class Announcement(commands.Cog, name="Announcement"):
 
         __areasDic = {
             'First Light': 'Erstes Licht',
-            'Monach\'s Bluffs': 'Königsfels',
+            'Monarch\'s Bluffs': 'Königsfels',
             'Everfall': 'Immerfall',
             'Windsward': 'Windkreis',
             'Cutless Keys': 'Entermesserriff',
