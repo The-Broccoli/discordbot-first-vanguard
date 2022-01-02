@@ -90,8 +90,8 @@ class AnnouncementMessages():
         __meetingTime = __meetingTime - timedelta(minutes=15)
         __meetingTime = __meetingTime.strftime('%H:%M')
         embed = discord.Embed(title='👺  Das Kriegshorn ruft - Die Verderbten greifen an!',
-                              description=f'Am **{day}** um **{time}** greifen die Verderbten'
-                              f'unser geliebtes **{area}** an. Meldet euch bitte rechtzeitig in'
+                              description=f'Am **{day}** um **{time}** greifen die Verderbten '
+                              f'unser geliebtes **{area}** an. Meldet euch bitte __rechtzeitig__ in '
                               f'**{area}**, am War Board (Kriegs Brett) für die Invasion an.',
                               color=discord.Color.purple())
         embed.add_field(name='ℹ  Zusammenfassung',
