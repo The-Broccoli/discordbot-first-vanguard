@@ -54,7 +54,7 @@ class Announcement(commands.Cog, name="Announcement"):
         def disabled_all_button(self):
             """Sets all buttons with specific names to disabled"""
             for b in self.children:
-                if b.custom_id == 'war_agression_button' or b.custom_id == 'war_defense_button' or b.custom_id == 'invasion_button' or b.custom_id == 'push_button':
+                if b.custom_id == 'war_attack_button' or b.custom_id == 'war_defense_button' or b.custom_id == 'invasion_button' or b.custom_id == 'push_button':
                     b.disabled = True
 
         def enable_select(self):
@@ -81,10 +81,10 @@ class Announcement(commands.Cog, name="Announcement"):
 
         @discord.ui.button(label="Angriffskrieg",
                            style=discord.ButtonStyle.secondary,
-                           custom_id="war_agression_button",
+                           custom_id="war_attack_button",
                            emoji='⚔')
-        async def button_war_agression(self, button, interaction):
-            self.buttonRes = 'war_agression'
+        async def button_war_attack(self, button, interaction):
+            self.buttonRes = 'war_attack'
             self.disabled_all_button()
             button.style = discord.ButtonStyle.primary
             self.enable_select()
@@ -345,7 +345,7 @@ class Announcement(commands.Cog, name="Announcement"):
                 # ---------- view1.5 ----------
                 # if no argument value is given no_argument_embed
                 # is sent and the command is aborted
-                if view1.buttonRes == 'war_defense' or view1.buttonRes == 'war_agression' or view1.buttonRes == 'push':
+                if view1.buttonRes == 'war_defense' or view1.buttonRes == 'war_attack' or view1.buttonRes == 'push':
                     try:
                         enemy = args[0].replace('_', ' ')
                     except:
@@ -387,7 +387,7 @@ class Announcement(commands.Cog, name="Announcement"):
                 if enemy == '':
                     annoEmbed = self.a_embed.inv(
                         ctx, view1.slectRes, view2.slectRes, view3.slectRes)
-                elif view1.buttonRes == 'war_defense' or view1.buttonRes == 'war_agression':
+                elif view1.buttonRes == 'war_defense' or view1.buttonRes == 'war_attack':
                     annoEmbed = self.a_embed.war(
                         ctx, view1.buttonRes, view1.slectRes, view2.slectRes, view3.slectRes, enemy)
                 else:
