@@ -37,7 +37,7 @@ class AnnouncementMessages():
         __meetingTime = datetime.strptime(time, '%H:%M')
         __meetingTime = __meetingTime - timedelta(minutes=30)
         __meetingTime = __meetingTime.strftime('%H:%M')
-        if type == 'war_agression':
+        if type == 'war_attack':
             embed = discord.Embed(title='⚔  Das Kriegshorn ruft - Dein Gouverneur benötigt dich!',
                                   description=f'Um **{time}** am **{day}** führen wir einen Krieg um **{area}**\n '
                                   f'gegen **{enemy}**. Meldet euch bitte __rechtzeitig__ in {area}, '
@@ -89,10 +89,10 @@ class AnnouncementMessages():
         __meetingTime = datetime.strptime(time, '%H:%M')
         __meetingTime = __meetingTime - timedelta(minutes=15)
         __meetingTime = __meetingTime.strftime('%H:%M')
-        embed = discord.Embed(title='👺  Das Kriegshorn ruft - Complete Invasions!',
-                              description=f'Am **{day}** um **{time}** fällt die Korruption in '
-                              f'unser geliebtes **{area}** ein. Meldet euch bitte rechtzeitig in '
-                              f'**{area}**, am War Board (Kriegs Brett) für den Invasions an.',
+        embed = discord.Embed(title='👺  Das Kriegshorn ruft - Die Verderbten greifen an!',
+                              description=f'Am **{day}** um **{time}** greifen die Verderbten '
+                              f'unser geliebtes **{area}** an. Meldet euch bitte __rechtzeitig__ in '
+                              f'**{area}**, am War Board (Kriegs Brett) für die Invasion an.',
                               color=discord.Color.purple())
         embed.add_field(name='ℹ  Zusammenfassung',
                         value=f' - Wo: `{area}`\n'
