@@ -32,12 +32,12 @@ class AnnouncementMessages():
 
         return embed
 
-    def war(self, ctx: commands.Context, type, area, day, time, enemy):
+    def war(self, ctx: commands.Context, type, area, day, time, enemy, friend):
         """Returns an embed for the war announcement message"""
         __meetingTime = datetime.strptime(time, '%H:%M')
         __meetingTime = __meetingTime - timedelta(minutes=30)
         __meetingTime = __meetingTime.strftime('%H:%M')
-        if type == 'war_attack':
+        if type == 'Angriffskrieg':
             embed = discord.Embed(title='⚔  Das Kriegshorn ruft - Dein Gouverneur benötigt dich!',
                                   description=f'Um **{time}** am **{day}** führen wir einen Krieg um **{area}**\n '
                                   f'gegen **{enemy}**. Meldet euch bitte __rechtzeitig__ in {area}, '
