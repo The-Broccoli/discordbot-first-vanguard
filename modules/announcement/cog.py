@@ -40,10 +40,11 @@ class Announcement(commands.Cog, name="Announcement"):
             'Windsward': 'Windkreis',
             'Cutless Keys': 'Entermesserriff',
             'Reekwater': 'Brackwasser',
-            'Ebonscale Reach': 'Lichtholz',
+            'Ebonscale Reach': 'Ebenmaß',
             'Weaver\'s Fen': 'Webermoor',
             'Restless Shore': 'Unstete Küste',
             'Mourningdale': 'Klagental',
+            'Brightwood' : 'Lichtholz',
         }
 
         __areas = []
