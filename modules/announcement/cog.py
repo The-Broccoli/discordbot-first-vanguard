@@ -8,7 +8,6 @@ from discord.commands import Option, slash_command
 from discord.ext import commands
 from messages.announcement import AnnouncementMessages
 from messages.generel import GenerelMessages
-from modules.announcement.preview_view import PreviewView
 
 
 class Announcement(commands.Cog, name='Announcement'):
@@ -37,10 +36,11 @@ class Announcement(commands.Cog, name='Announcement'):
                                               'Windsward (Windkreis)',
                                               'Cutless Keys (Entermesserriff)',
                                               'Reekwater (Brackwasser)',
-                                              'Ebonscale Reach (Lichtholz)',
+                                              'Ebonscale Reach (Ebenmaß)',
                                               'Weaver\'s Fen (Webermoor)',
                                               'Restless Shore (Unstete Küste)',
-                                              'Mourningdale (Klagental)'],
+                                              'Mourningdale (Klagental)',
+                                              'Brightwood (Lichtholz)'],
                                      required=True,
                                      default=''),
                       date: Option(str,
@@ -51,17 +51,21 @@ class Announcement(commands.Cog, name='Announcement'):
                                    'Um welche Uhrzeit findet es statt? (HH:MM)',
                                    required=True,
                                    default=''),
+                      additional: Option(str,
+                                         'Zusatzinformationen zum Event?',
+                                         required=False,
+                                         default=''),
                       enemy: Option(str,
                                     'Welcher Gegner greift an?',
                                     required=False,
                                     default=''),
                       friend: Option(str,
-                                     'Mit welchem Verbündeten greift wir an?',
+                                     'Mit welchem Verbündeten greift wir an? (Zusatzinformation "friend" wird nur in PVP-Push angezeigt)',
                                      required=False,
                                      default='')):
         # logging - who uses the commands and with which augments
         self.log.info(
-            f'{ctx.author} called command annonew (channel: {channel}, type: {type}, region: {region}, date: {date}, time: {time}, enemy: {enemy}, friend: {friend})')
+            f'{ctx.author} called command /annonew (channel: {channel}, type: {type}, region: {region}, date: {date}, time: {time}, additional: {additional}, enemy: {enemy}, friend: {friend})')
         # load config
         self.config = GeneralFunctions(self.bot).load_config()
         if GeneralFunctions(self.bot).user_authorization(ctx, self.config['role']['bot_commander']):
@@ -79,16 +83,24 @@ class Announcement(commands.Cog, name='Announcement'):
             # Check if flag is not empty
             if __flag:
                 __flag = ' '.join(__flag)
-                __msg = await ctx.respond(ephemeral=True, embed=self.g_embed.error(self.commandTitel, f'{__flag} ist nicht korrekt angegeben.'))
+                await ctx.respond(ephemeral=True, embed=self.g_embed.error(self.commandTitel, f'{__flag} ist nicht korrekt angegeben.'))
+                return
             else:
-                annoEmbed = self.a_embed.war(ctx, type, region, date, time, 'test', 'test')
-                __msg = await ctx.respond(embed=annoEmbed)
-
-            # TODO am ende die msg löschen ... aber wie ? ('Interaction' object has no attribute 'delete')
-            # await __msg.delete(reason='Command annosetup')
+                # Special arrangement
+                if type == 'Angriffskrieg' or type == 'Verteidigungskrieg':
+                    if not enemy:
+                        await ctx.respond(ephemeral=True, embed=self.g_embed.error(self.commandTitel, '"enemy" ist nicht angegeben.'))
+                        return
+                annoEmbed = self.a_embed.event(
+                    ctx, type, region, date, time, additional, enemy, friend)
+                await channel.send(embed=annoEmbed)
+                await ctx.respond(embed=self.a_embed.delivered(ctx, channel, self.commandTitel))
+                return
         else:
             # Ist nicht authorisiert
-            pass
+            self.log.info(
+                f'{ctx.author} command /annonew terminated - is not authorized')
+            await ctx.respond(ephemeral=True, embed=self.g_embed.error(self.commandTitel, f'Du bist nicht authorisiert, diesen Befehl zu nutzen.'))
 
 
 def setup(bot):
