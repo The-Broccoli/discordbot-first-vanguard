@@ -18,7 +18,7 @@ class Announcement(commands.Cog, name='Announcement'):
         self.g_embed = GenerelMessages(bot)  # General embeds
         self.commandTitel = "Ankündigung"  # Command Titel for the embed
 
-    @slash_command(name='annonew', description='Erstelle eine Ankündigung', guild_ids=[ID])
+    @slash_command(name='announcement', description='Erstelle eine Ankündigung', guild_ids=[ID])
     async def annonew(self,
                       ctx: commands.Context,
                       channel: discord.TextChannel,
