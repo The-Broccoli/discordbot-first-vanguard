@@ -19,7 +19,8 @@ class Taxes(commands.Cog, name="Taxes"):
         self.g_embed = GenerelMessages(bot)
         self.bot = bot
         self.taxesTitele = 'Gildensteuer'
-
+    
+    '''
     class TaxView(View):
         def __init__(self, ctx, config):
             self.ctx = ctx
@@ -173,7 +174,7 @@ class Taxes(commands.Cog, name="Taxes"):
             await ctx.send(embed=self.blacklist_embed(__blacklist))
         else:
             await ctx.send(embed=self.g_embed.error(self.taxesTitele, 'Du hast keine Berechtigung für diesen Befehl!'))
-
+    '''
 
 def setup(bot: commands.Bot):
     bot.add_cog(Taxes(bot))
