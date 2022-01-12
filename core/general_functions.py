@@ -19,7 +19,10 @@ class GeneralFunctions():
     def config_str_to_list(self, config_str: str):
         """Converts a string to a list"""
         config_list = config_str.split(',')
-        config_list = [int(i) for i in config_list]
+        try:
+            config_list = [int(i) for i in config_list]
+        except ValueError:
+            config_list = []
         return config_list
 
     def user_authorization(self, ctx: commands.Context, config_str: int):

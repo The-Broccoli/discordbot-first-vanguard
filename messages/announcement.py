@@ -25,35 +25,23 @@ class AnnouncementMessages():
                         ' - Honing Stone\n')
         return embed
 
-    def info_text(self, commandTitle):
-        """Returns an embed with the info text for the announcement command"""
-        embed = discord.Embed(title=f'{commandTitle} - Formular',
-                              description='Wähle hintereinander bitte folgende Informationen aus\n\n'
-                              '- Art des Events: `Angriffskrieg, Verteidigungskrieg, ...`\n'
-                              '- In welchem Gebiet: `Everfall, Windsward, Mourningdale, ...`\n'
-                              '- An welchen Tag: `Tue, Wed, Thu, Fri ...`\n'
-                              '- Um wie viel Uhr: `17:30, 18:00, 18:30, 19:00, ...`',
-                              color=discord.Color.purple())
-
-        return embed
-
     def event(self, ctx: commands.Context, type, area, day, time, additional, enemy, friend):
         """Returns an embed for the war announcement message"""
         __meetingTime = datetime.strptime(time, '%H:%M')
-        __meetingTime = __meetingTime - timedelta(minutes=30)
-        __meetingTime = __meetingTime.strftime('%H:%M')
         # ----------------------------------------------------------
         if type == 'Angriffskrieg':
+            __meetingTime = __meetingTime - timedelta(minutes=45)
+            __meetingTime = __meetingTime.strftime('%H:%M')
             embed = discord.Embed(title='⚔  Das Kriegshorn ruft - Dein Gouverneur benötigt dich!',
-                                  description=f'Um **{time}** am **{day}** führen wir einen Krieg um **{area}**\n '
+                                  description=f'Am **{day}** um **{time}** führen wir einen Krieg um **{area}**\n '
                                   f'gegen **{enemy}**. Meldet euch bitte __rechtzeitig__ in {area}, '
-                                  'am War Board (Kriegs Brett) für den Krieg an.',
+                                  'am War Board (Kriegsbrett), für den Krieg an.',
                                   color=discord.Color.purple())
             if additional:
-                embed.add_field(name='Zusaetzliche Informationen',
+                embed.add_field(name='ℹ Zusaetzliche Informationen',
                                 value=additional, inline=False)
             embed.add_field(
-                name='ℹ  Zusammenfassung',
+                name='\U0001F4CC Zusammenfassung',
                 value=f' - Wo: `{area}`\n'
                 f' - Wann (Ingame): `{day}` um `{time}`\n'
                 f' - Wann (Discord): `{__meetingTime}`\n'
@@ -61,10 +49,12 @@ class AnnouncementMessages():
             embed = self.add_war_remember(embed)
         # ----------------------------------------------------------
         elif type == 'Verteidigungskrieg':
+            __meetingTime = __meetingTime - timedelta(minutes=45)
+            __meetingTime = __meetingTime.strftime('%H:%M')
             embed = discord.Embed(title='🛡  Das Kriegshorn ruft - Wir werden angegriffen!',
                                   description=f'Am **{day}** um **{time}** müssen wir unser geliebtes **{area}**\n '
                                   f'gegen **{enemy}** verteidigen. Meldet euch bitte __rechtzeitig__ in {area}, am '
-                                  'War Board (Kriegs Brett) für den Krieg an.',
+                                  'War Board (Kriegsbrett), für den Krieg an.',
                                   color=discord.Color.purple())
             if additional:
                 embed.add_field(name='Zusaetzliche Informationen',
@@ -76,17 +66,19 @@ class AnnouncementMessages():
                 f' - Wann (Discord): `{__meetingTime}`')
             embed = self.add_war_remember(embed)
         # ----------------------------------------------------------
-        elif type == 'PVP-Push':
-            if friend:
 
+        elif type == 'PVP-Push':
+            __meetingTime = __meetingTime - timedelta(minutes=15)
+            __meetingTime = __meetingTime.strftime('%H:%M')
+            if friend:
                 embed = discord.Embed(title='✊  Das Syndikat ruft - Wir pushen ein Gebiet!',
-                                      description=f'Um **{time}** am **{day}** werden wir gnadenlos den Einfluss mit '
+                                      description=f'Am **{day}** um **{time}** werden wir gnadenlos den Einfluss mit '
                                       f'der Kompanie **{friend}** in **{area}** pushen. Umso mehr helfen, desto schneller sind wir fertig.',
                                       color=discord.Color.purple())
 
             else:
                 embed = discord.Embed(title='✊  Das Syndikat ruft - Wir pushen ein Gebiet!',
-                                      description=f'Um **{time}** am **{day}** werden wir gnadenlos den Einfluss '
+                                      description=f'Am **{day}** um **{time}** werden wir gnadenlos den Einfluss '
                                       f'in **{area}** pushen. Umso mehr helfen, desto schneller sind wir fertig.',
                                       color=discord.Color.purple())
             if additional:
@@ -99,10 +91,12 @@ class AnnouncementMessages():
                             f' - Zusammen mit: `{enemy}`')
         # ----------------------------------------------------------
         elif type == 'Invasion':
+            __meetingTime = __meetingTime - timedelta(minutes=30)
+            __meetingTime = __meetingTime.strftime('%H:%M')
             embed = discord.Embed(title='👺  Das Kriegshorn ruft - Die Verderbten greifen an!',
                                   description=f'Am **{day}** um **{time}** greifen die Verderbten '
                                   f'unser geliebtes **{area}** an. Meldet euch bitte __rechtzeitig__ in '
-                                  f'**{area}**, am War Board (Kriegs Brett) für die Invasion an.',
+                                  f'**{area}**, am War Board (Kriegsbrett), für die Invasion an.',
                                   color=discord.Color.purple())
             if additional:
                 embed.add_field(name='Zusaetzliche Informationen',
@@ -127,11 +121,3 @@ class AnnouncementMessages():
                               f'wurde im Channel <#{channel.id}> gepostet!',
                               color=discord.Color.purple())
         return embed
-
-    # def config_saved(self, ctx: commands.Context, channelId: str, commandTitle):
-    #     """returns an embed for the config saved announcement message"""
-    #     embed = discord.Embed(title=f'{commandTitle} - Konfiguration gespeichert!',
-    #                           description=f'{ctx.message.author.mention} Die Konfiguration wurde gespeichert!\n'
-    #                           f'Ankündigung werden jetzt in <#{channelId}> gepostet',
-    #                           color=discord.Color.purple())
-    #     return embed

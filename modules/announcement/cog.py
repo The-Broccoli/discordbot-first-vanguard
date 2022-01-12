@@ -18,7 +18,7 @@ class Announcement(commands.Cog, name='Announcement'):
         self.g_embed = GenerelMessages(bot)  # General embeds
         self.commandTitel = "Ankündigung"  # Command Titel for the embed
 
-    @slash_command(name='annonew', description='Erstelle eine Ankündigung', guild_ids=[480418209099546665])
+    @slash_command(name='annonew', description='Erstelle eine Ankündigung', guild_ids=[ID])
     async def annonew(self,
                       ctx: commands.Context,
                       channel: discord.TextChannel,
@@ -44,7 +44,7 @@ class Announcement(commands.Cog, name='Announcement'):
                                      required=True,
                                      default=''),
                       date: Option(str,
-                                   'Wann ist das Event? (DD.MM)',
+                                   'Wann ist das Event? (DD.MM.YYYY)',
                                    required=True,
                                    default=''),
                       time: Option(str,
@@ -72,7 +72,7 @@ class Announcement(commands.Cog, name='Announcement'):
             __flag = []
             # Check if "data" has the correct spelling
             try:
-                __eventDayTest = datetime.strptime(date, '%d.%m')
+                __eventDayTest = datetime.strptime(date, '%d.%m.%Y')
             except ValueError:
                 __flag.append('"date"')
             # Check if "time" has the correct spelling
