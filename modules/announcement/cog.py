@@ -93,7 +93,13 @@ class Announcement(commands.Cog, name='Announcement'):
                         return
                 annoEmbed = self.a_embed.event(
                     ctx, type, region, date, time, additional, enemy, friend)
-                await channel.send(embed=annoEmbed)
+                __memberRollId = self.config.get('role', 'member')
+                __memberRollId = GeneralFunctions(
+                    self.bot).config_str_to_list(__memberRollId)
+                __rollstr = ''
+                for m in __memberRollId:
+                    __rollstr += f'<@&{str(m)}> '
+                await channel.send(f'{__rollstr}', embed=annoEmbed)
                 await ctx.respond(embed=self.a_embed.delivered(ctx, channel, self.commandTitel))
                 return
         else:
