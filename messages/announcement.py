@@ -44,7 +44,7 @@ class AnnouncementMessages():
                 name='\U0001F4CC Zusammenfassung',
                 value=f' - Wo: `{area}`\n'
                 f' - Wann (Ingame): `{day}` um `{time}`\n'
-                f' - Wann (Discord): `{__meetingTime}`\n'
+                f' - Wann (Discord): `{day}` um `{__meetingTime}`\n'
                 f' - Gegen: `{enemy}`')
             embed = self.add_war_remember(embed)
         # ----------------------------------------------------------
@@ -63,7 +63,7 @@ class AnnouncementMessages():
                 name='ℹ  Zusammenfassung',
                 value=f' - Wo: `{area}`\n'
                 f' - Wann (Ingame): `{day}` um `{time}`\n'
-                f' - Wann (Discord): `{__meetingTime}`')
+                f' - Wann (Discord): `{day}` um `{__meetingTime}`')
             embed = self.add_war_remember(embed)
         # ----------------------------------------------------------
 
@@ -87,7 +87,7 @@ class AnnouncementMessages():
             embed.add_field(name='ℹ  Zusammenfassung',
                             value=f' - Wo: `{area}`\n'
                             f' - Wann (Ingame): `{day}` um `{time}`\n'
-                            f' - Wann (Discord): `{__meetingTime}`\n'
+                            f' - Wann (Discord): `{day}` um `{__meetingTime}`\n'
                             f' - Zusammen mit: `{enemy}`')
         # ----------------------------------------------------------
         elif type == 'Invasion':
@@ -104,7 +104,7 @@ class AnnouncementMessages():
             embed.add_field(name='ℹ  Zusammenfassung',
                             value=f' - Wo: `{area}`\n'
                             f' - Wann (Ingame): `{day}` um `{time}`\n'
-                            f' - Wann (Discord): `{__meetingTime}`\n')
+                            f' - Wann (Discord): `{day}` um `{__meetingTime}`\n')
             embed.add_field(name='🛠  Denkt bitte an',
                             value=' - Trophy(s)\n'
                             ' - Corrupted Coatings\n'
